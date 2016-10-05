@@ -10,15 +10,15 @@ var allTrucks = {};
 $(function() {
   console.log('jQuery works!');
   $(window).on('keydown', checkKey);
-  // genID = setInterval(generateTruck, 1000);
+  genID = setInterval(generateTruck, 1000);
   $mainContainer = $('.main-container').eq(0);
-  generateTruck();
+  // generateTruck();
 });
 
 function generateTruck() {
   numTrucks++;
 
-  if(numTrucks > 6) {
+  if(numTrucks > 3) {
     return;
   }
 
@@ -29,11 +29,12 @@ function generateTruck() {
   var cellNum = Math.floor((Math.random() * 5) + 5);
   console.log(cellNum);
   var cellsForNewTruck = $(('.cell-' + cellNum + ':lt(' + (rightColNum) + '):gt(' + (leftColNum - 1) + ')'));
-  // console.log(cellsForNewTruck);
   cellsForNewTruck.css('background', 'red');
   cellsForNewTruck.data('isAllowed', 'false');
-  // var
-  // allTrucks[]
+  allTrucks[('trucks' + numTrucks)] = cellsForNewTruck;
+  for (truck in allTrucks) {
+    console.log(allTrucks[truck]);
+  }
 }
 
   function checkKey(e) {
