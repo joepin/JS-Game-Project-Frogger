@@ -1,0 +1,42 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.flex-container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-content: space-between;
+}
+
+.main-container {
+  height: 99vh;
+  width: 99vh;
+  /*background: red;*/
+  border: 2px solid black;
+  margin: 0 auto;
+}
+
+.column {
+  height: 11.11%;
+  width: 100%;
+}
+
+.cell {
+  border-radius: 3px;
+  min-height: 100%;
+  min-width: 12.5%;
+}
+
+/*.column:nth-child(even) .cell:nth-child(odd) {
+  background: yellow;
+}
+
+.column:nth-child(odd) .cell:nth-child(even) {
+  background: green;
+}*/
+
+#frogger {
+  background: blue;
+}
