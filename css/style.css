@@ -19,14 +19,14 @@ body {
 }
 
 .column {
-  height: 11.11%;
+  height: 6.25%;
   width: 100%;
 }
 
 .cell {
   border-radius: 3px;
   min-height: 100%;
-  min-width: 12.5%;
+  min-width: 6.25%;
 }
 
 /*.column:nth-child(even) .cell:nth-child(odd) {

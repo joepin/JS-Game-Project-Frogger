@@ -1,6 +1,6 @@
 console.log('game-script.js linked!');
 
-var gridSize = 9;
+var gridSize = 16;
 var $curPos = null;
 var $mainContainer = null;
 var genID = null;
