@@ -33,30 +33,10 @@ function getAllParameters() {
 
 function generateSprite(spriteType) {
   var sprite = new Sprite(spriteType);
-  // sprite.spriteLength = spriteLength;
-  // sprite.rightColNum = Math.floor((Math.random() * 14) + 3);
-  // sprite.leftColNum = sprite.rightColNum - sprite.spriteLength;
-  console.log(sprite.type.leftColNum, sprite.type.rightColNum);
-  getCellElems(sprite);
+  sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum);
   return sprite;
 }
 
-function getCellElems(sprite) {
-  // console.log(sprite.leftColNum, sprite.rightColNum, sprite.cellNum);
-  var $allCells = $(('.cell-' + sprite.type.cellNum)).toArray();
-  // console.log($allCells);
-  // var $goodCells = [];
-  for (var i = sprite.type.leftColNum; i < (sprite.type.rightColNum); i++){
-    sprite.cellsTakenUp.push($allCells[i]);
-    // console.log(('allCells ' + i + ': '), $allCells[i]);
-  }
-  sprite.type.$firstCell = $allCells[sprite.type.leftColNum];
-  sprite.type.$lastCell = $allCells[sprite.type.rightColNum - 1];
-  sprite.type.$nextCellLeft = $allCells[sprite.type.leftColNum - 1];
-  sprite.type.$nextCellRight = $allCells[sprite.type.rightColNum];
-  // console.log(sprite.cellsTakenUp);
-  // return ($(('.cell-' + this.cellNum + ':lt(' + (this.rightColNum) + '):gt(' + (this.leftColNum - 1) + ')'))).get();
-}
 
 function isValidPosition(sprite) {
   var spriteCells = sprite.cellsTakenUp;

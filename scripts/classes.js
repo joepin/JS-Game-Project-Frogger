@@ -1,6 +1,6 @@
 class Sprite {
+
   constructor(type) {
-    this.elements = [];
     this.type = new type();
     this.cellsTakenUp = [];
   }
@@ -10,7 +10,6 @@ class Sprite {
     var numCells = this.cellsTakenUp.length;
     var $nextCell = null;
     var $removeCell = null;
-    console.log(this);
     if (this.type.cellNum % 2 == 0) {
       direction = 'neg';
       $nextCell = this.getNextCell(this, direction);
@@ -20,12 +19,22 @@ class Sprite {
       $nextCell = this.getNextCell(this, direction);
       $removeCell = this.type.$firstCell
     }
-    console.log('next cell: ' + $nextCell + ' remove cell: ' + $removeCell);
     this.swapCells($nextCell, $removeCell);
+    this.updateObject(direction);
+    this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum);
+  }
+
+  updateObject(dir) {
+    if (dir == 'neg') {
+      this.type.rightColNum--;
+    }
+    if (dir == 'pos') {
+      this.type.rightColNum++;
+    }
+    this.type.leftColNum = this.type.rightColNum - this.type.spriteLength;
   }
 
   getNextCell(sprite, dir) {
-    console.log(sprite);
     if (dir == 'neg') {
       return sprite.type.$nextCellLeft;
     }
@@ -39,6 +48,20 @@ class Sprite {
     $next.dataset.isallowed = 'no';
     $remove.style.backgroundColor = '';
     $remove.dataset.isallowed = 'yes';
+  }
+
+  getCellElems(cellNum, left, right) {
+    var $allCells = $(('.cell-' + cellNum)).toArray();
+    var toReturn = [];
+    for (var i = left; i < right; i++){
+      toReturn.push($allCells[i]);
+      // console.log(i);
+    }
+    this.type.$firstCell = $allCells[left];
+    this.type.$lastCell = $allCells[right - 1];
+    this.type.$nextCellLeft = $allCells[left - 1];
+    this.type.$nextCellRight = $allCells[right];
+    return toReturn;
   }
 
 }
