@@ -29,23 +29,22 @@ function getAllParameters() {
   }
 }
 
-function generateSprite(spriteType, spriteLength) {
+function generateSprite(spriteType) {
   var sprite = new Sprite(spriteType);
-  sprite.spriteLength = spriteLength;
-  sprite.rightColNum = Math.floor((Math.random() * 14) + 3);
-  sprite.leftColNum = sprite.rightColNum - sprite.spriteLength;
-  console.log(sprite.leftColNum, sprite.rightColNum);
-  sprite.cellNum = Math.floor((Math.random() * 6) + 10);
+  // sprite.spriteLength = spriteLength;
+  // sprite.rightColNum = Math.floor((Math.random() * 14) + 3);
+  // sprite.leftColNum = sprite.rightColNum - sprite.spriteLength;
+  console.log(sprite.type.leftColNum, sprite.type.rightColNum);
   getCellElems(sprite);
   return sprite;
 }
 
 function getCellElems(sprite) {
   // console.log(sprite.leftColNum, sprite.rightColNum, sprite.cellNum);
-  var $allCells = $(('.cell-' + sprite.cellNum)).toArray();
+  var $allCells = $(('.cell-' + sprite.type.cellNum)).toArray();
   // console.log($allCells);
   // var $goodCells = [];
-  for (var i = sprite.leftColNum; i < (sprite.rightColNum); i++){
+  for (var i = sprite.type.leftColNum; i < (sprite.type.rightColNum); i++){
     sprite.cellsTakenUp.push($allCells[i]);
     // console.log(('allCells ' + i + ': '), $allCells[i]);
   }
@@ -73,12 +72,12 @@ function generateTruck() {
     clearInterval(genID);
     return;
   }
-  var lengthOfTruck = 3;
-  var thisTruck = generateSprite('truck', lengthOfTruck);
+  // var lengthOfTruck = 3;
+  var thisTruck = generateSprite(Truck);
   var allGood = true;
   var count = 0;
   while (!isValidPosition(thisTruck) && allGood) {
-    thisTruck = generateSprite('truck', lengthOfTruck);
+    thisTruck = generateSprite(Truck);
     count++;
     if (count >= 5) {
       gotOutCount++;

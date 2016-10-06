@@ -1,11 +1,16 @@
 class Sprite {
   constructor(type) {
     this.elements = [];
-    this.type = type;
-    this.spriteLength = 0;
+    this.type = new type();
     this.cellsTakenUp = [];
-    this.rightColNum = 0;
-    this.leftColNum = 0;
-    this.cellNum = 0;
+  }
+}
+
+class Truck {
+  constructor() {
+    this.spriteLength = 3;
+    this.rightColNum = Math.floor((Math.random() * 14) + 3);
+    this.leftColNum = this.rightColNum - this.spriteLength;
+    this.cellNum = Math.floor((Math.random() * 6) + 10);
   }
 }
