@@ -1,27 +1,33 @@
 class Sprite {
 
   constructor(type) {
-    this.type = new type();
+    this.type = type;
     this.cellsTakenUp = [];
+    this.offBoard = false;
   }
 
   move() {
     var direction = null;
+    // console.log(this);
     var numCells = this.cellsTakenUp.length;
     var $nextCell = null;
     var $removeCell = null;
     if (this.type.cellNum % 2 == 0) {
       direction = 'neg';
-      $nextCell = this.getNextCell(this, direction);
+      $nextCell = this.type.$nextCellLeft;
       $removeCell = this.type.$lastCell;
     } else {
       direction = 'pos';
-      $nextCell = this.getNextCell(this, direction);
+      $nextCell = this.type.$nextCellRight;
       $removeCell = this.type.$firstCell
+    }
+    if (!$nextCell && !$removeCell && !this.type.firstMove) {
+      this.offBoard = true;
     }
     this.swapCells($nextCell, $removeCell);
     this.updateObject(direction);
     this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum);
+    this.type.firstMove = false;
   }
 
   updateObject(dir) {
@@ -44,9 +50,6 @@ class Sprite {
   }
 
   swapCells($next, $remove) {
-    // if (!isFroggerAllowed($next)) {
-    //   doLoss();
-    // }
     if ($next) {
       $next.style.backgroundColor = 'red';
       $next.dataset.isallowed = 'no';
@@ -60,6 +63,15 @@ class Sprite {
   getCellElems(cellNum, left, right) {
     var $allCells = $(('.cell-' + cellNum)).toArray();
     var toReturn = [];
+    // if (left < 1 || right > gridSize) {
+    //   // if (cellNum % 2 == 0) {
+    //   //   // this.type.$nextCellLeft = $allCells[window.gridSize - 1];
+    //   // } else {
+    //   //   // this.type.$nextCellRight = $allCells[0];
+    //   // }
+    //   console.log('this thing is true');
+    //   return toReturn;
+    // }
     for (var i = left; i < right; i++){
       toReturn.push($allCells[i]);
       // console.log(i);
@@ -68,19 +80,35 @@ class Sprite {
     this.type.$lastCell = $allCells[right - 1];
     this.type.$nextCellLeft = $allCells[left - 1];
     this.type.$nextCellRight = $allCells[right];
+    // console.log(toReturn);
     return toReturn;
   }
 
 }
 
-
-
 class Truck {
-  constructor() {
+  constructor(randOrOrdered) {
+    this.creationType = randOrOrdered;
+    this.firstMove = false;
     this.spriteLength = 3;
-    this.rightColNum = Math.floor((Math.random() * 14) + 3);
+    this.cellNum = getRandom(7, 10);
+    if (randOrOrdered == 'rand') {
+      this.rightColNum = getRandom(14, 3);
+    }
+    if (randOrOrdered == 'ordered') {
+      this.firstMove = true;
+      if (this.cellNum % 2 == 0) {
+        this.direction = 'neg';
+        this.rightColNum = gridSize + 1 + this.spriteLength;
+        this.$nextCellLeft = $('.cell-' + (gridSize)).eq(this.cellNum);
+      } else {
+        this.direction = 'pos';
+        this.rightColNum = 0;
+        this.$nextCellRight = $('.cell-1').eq(this.cellNum);
+      }
+    }
     this.leftColNum = this.rightColNum - this.spriteLength;
-    this.cellNum = Math.floor((Math.random() * 6) + 10);
+    console.log(this.cellNum, this.leftColNum, this.rightColNum);
     this.$firstCell = null;
     this.$lastCell = null;
     this.$nextCellLeft = null;

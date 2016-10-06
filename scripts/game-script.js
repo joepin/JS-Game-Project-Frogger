@@ -1,24 +1,21 @@
 console.log('game-script.js linked!');
 
-var gridSize = 17;
-var $curPos = null;
-var $mainContainer = null;
-var $body = null;
-var genID = null;
-var moveTrucksID = null;
-var numTrucks = 0;
-var gotOutCount = 0;
-var allTrucks = {};
+var totRan = 0;
 
 $(function() {
   console.log('jQuery works!');
   getAllParameters();
   $(window).on('keydown', checkKey);
-  genID = setInterval(generateTruck, 0);
+  for (var i = 0; i < maxTrucks; i++) {
+    var newTruck = generateTruck('rand');
+    numTrucks++;
+    totRan++;
+  }
   $mainContainer = $('.main-container').eq(0);
   $body = $('body');
   // generateTruck();
   moveTrucksID = setInterval(moveTrucks, 1000);
+  checkTrucksID = setInterval(checkTrucks, 1000);
   setInterval(function(){
     var $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
@@ -31,6 +28,9 @@ $(function() {
 function getAllParameters() {
   // get and parse the url
   var fullURL = window.location.href;
+  if (!fullURL.includes('?')) {
+    return;
+  }
   var queryString = fullURL.split('?')[1];
   // split query string into an array of key-value pair strings
   var paramsAndVals = queryString.split('&');
@@ -46,9 +46,29 @@ function moveTrucks() {
   }
 }
 
-function generateSprite(spriteType) {
-  var sprite = new Sprite(spriteType);
+function checkTrucks() {
+      console.log('object size: ' + Object.keys(allTrucks).length);
+
+  for (var truck in allTrucks) {
+    if (allTrucks[truck].offBoard) {
+      // console.log('OFFBOARD: ' + allTrucks[truck]);
+      delete allTrucks[truck];
+      numTrucks--;
+    }
+    if (Object.keys(allTrucks).length < (1.5 * maxTrucks)) {
+      console.log('true totRan: ' + totRan);
+      allTrucks[('trucks' + totRan)] = generateTruck('ordered');
+      numTrucks++;
+      totRan++;
+    }
+  }
+}
+
+function generateSprite(spriteType, randOrOrdered) {
+  var typeObj = new spriteType(randOrOrdered);
+  var sprite = new Sprite(typeObj);
   sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum);
+  // console.log(sprite.cellsTakenUp);
   return sprite;
 }
 
@@ -56,7 +76,7 @@ function generateSprite(spriteType) {
 function isValidPosition(sprite) {
   var spriteCells = sprite.cellsTakenUp;
   for(var i = 0; i < spriteCells.length; i++) {
-    if (spriteCells[i].dataset.isallowed == 'no') {
+    if (spriteCells[i] && spriteCells[i].dataset.isallowed == 'no') {
       console.log('not allowed');
       return false;
     }
@@ -64,17 +84,13 @@ function isValidPosition(sprite) {
   return true;
 }
 
-function generateTruck() {
-  numTrucks++;
-  if(numTrucks > 10) {
-    clearInterval(genID);
-    return;
-  }
-  var thisTruck = generateSprite(Truck);
+var gotOutCount = 0;
+function generateTruck(randOrOrdered) {
+  var thisTruck = generateSprite(Truck, randOrOrdered);
   var allGood = true;
   var count = 0;
   while (!isValidPosition(thisTruck) && allGood) {
-    thisTruck = generateSprite(Truck);
+    thisTruck = generateSprite(Truck, randOrOrdered);
     count++;
     if (count >= 5) {
       gotOutCount++;
@@ -83,11 +99,15 @@ function generateTruck() {
     }
   }
   if (allGood) {
+    // console.log(thisTruck);
     for (var i = 0; i < thisTruck.cellsTakenUp.length; i++) {
-      thisTruck.cellsTakenUp[i].dataset.isallowed = 'no';
-      thisTruck.cellsTakenUp[i].style.backgroundColor = 'red';
+      if (thisTruck.cellsTakenUp[i]){
+        thisTruck.cellsTakenUp[i].dataset.isallowed = 'no';
+        thisTruck.cellsTakenUp[i].style.backgroundColor = 'red';
+      }
     }
     allTrucks[('trucks' + numTrucks)] = thisTruck;
+    return thisTruck;
   }
 }
 
@@ -117,6 +137,7 @@ function generateTruck() {
     $(window).off('keydown', checkKey);
     console.log('Can\'t go there! lives--');
     clearInterval(moveTrucksID);
+    $('#frogger').attr('id', '');
   }
 
   function moveFrogger(nextCol, nextCell) {
