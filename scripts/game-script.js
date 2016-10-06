@@ -59,14 +59,14 @@ function generateTruck() {
   }
   var lengthOfTruck = 3;
   var thisTruck = generateSprite('truck', lengthOfTruck);
-  var getOut = false;
+  var keepGoing = true;
   var count = 0;
-  while (!isValidPosition(thisTruck) && !getOut) {
+  while (!isValidPosition(thisTruck) && keepGoing) {
     thisTruck = generateSprite('truck', lengthOfTruck);
     count++;
     if (count >= 5) {
       console.log('got out');
-      getOut = true;
+      keepGoing = true;
     }
   }
 
