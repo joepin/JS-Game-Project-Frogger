@@ -15,45 +15,69 @@ $(function() {
   // generateTruck();
 });
 
+function generateSprite(spriteType, spriteLength) {
+  var sprite = new Sprite(spriteType);
+  sprite.spriteLength = spriteLength;
+  sprite.rightColNum = Math.floor((Math.random() * 17) + 0);
+  sprite.leftColNum = sprite.rightColNum - sprite.spriteLength;
+  sprite.cellNum = Math.floor((Math.random() * 6) + 10);
+  getCellElems(sprite);
+  return sprite;
+}
+
+function getCellElems(sprite) {
+  console.log(sprite.leftColNum, sprite.rightColNum, sprite.cellNum);
+  var $allCells = $(('.cell-' + sprite.cellNum)).toArray();
+  console.log($allCells);
+  // var $goodCells = [];
+  for (var i = 0; i < (sprite.rightColNum - sprite.leftColNum); i++){
+    sprite.cellsTakenUp.push($allCells[i]);
+    console.log(('allCells ' + i + ': '), $allCells[i]);
+  }
+  // console.log(sprite.cellsTakenUp);
+  // return ($(('.cell-' + this.cellNum + ':lt(' + (this.rightColNum) + '):gt(' + (this.leftColNum - 1) + ')'))).get();
+}
+
+function isValidPosition(sprite) {
+  var spriteCells = sprite.cellsTakenUp;
+  console.log(spriteCells, spriteCells.length);
+  for(var i = 0; i < spriteCells.length; i++) {
+    console.log(i + ': ' + spriteCells[i]);
+    console.log(spriteCells[i].dataset.isallowed);
+    if (spriteCells[i].dataset.isallowed == 'no') {
+      return false;
+    }
+  }
+  return true;
+}
+
 function generateTruck() {
   numTrucks++;
-  if(numTrucks > 20) {
+  if(numTrucks > 10) {
+    clearInterval(genID);
     return;
   }
   var lengthOfTruck = 3;
-  var rightColNum = Math.floor((Math.random() * 17) + 0);
-  var leftColNum = rightColNum - lengthOfTruck;
-  var cellNum = Math.floor((Math.random() * 6) + 10);
-  var allGood = false;
-  var cellsForNewTruck;
-  var broke = false;
+  var thisTruck = generateSprite('truck', lengthOfTruck);
+  var getOut = false;
   var count = 0;
-  while (!allGood) {
-    cellsForNewTruck = $(('.cell-' + cellNum + ':lt(' + (rightColNum) + '):gt(' + (leftColNum - 1) + ')'));
-    for (var i = 0; i < cellsForNewTruck.length; i++) {
-      if (cellsForNewTruck[i].dataset.isallowed == 'yes') {
-        allGood = true;
-        console.log('count: ' + count + ' true ' + i);
-      } else {
-        console.log('count: ' + count + ' false ' + i);
-        break;
-        // allGood = false;
-      }
-    }
-    broke?console.log('still in while; broke'):broke;
-    cellsForNewTruck = $(('.cell-' + cellNum + ':lt(' + (rightColNum) + '):gt(' + (leftColNum - 1) + ')'));
-    rightColNum = Math.floor((Math.random() * 17) + 0);
-    leftColNum = rightColNum - lengthOfTruck;
-    cellNum = Math.floor((Math.random() * 6) + 10);
+  while (!isValidPosition(thisTruck) && !getOut) {
+    thisTruck = generateSprite('truck', lengthOfTruck);
     count++;
-    console.log(count)
+    if (count >= 5) {
+      console.log('got out');
+      getOut = true;
+    }
   }
 
-  for (var i = 0; i < cellsForNewTruck.length; i++) {
-    cellsForNewTruck[i].dataset.isallowed = 'no';
+  for (var i = 0; i < thisTruck.cellsTakenUp.length; i++) {
+    thisTruck.cellsTakenUp[i].dataset.isallowed = 'no';
+    thisTruck.cellsTakenUp[i].style.backgroundColor = 'red';
+    // console.log(thisTruck.cellsTakenUp[i].style.backgroundColor('red'));
+    // thisTruck.cellsTakenUp[i].style('background-color', 'red');
   }
-  cellsForNewTruck.css('background', 'red');
-  allTrucks[('trucks' + numTrucks)] = cellsForNewTruck;
+  // thisTruck.cellsTakenUp.css('background', 'red');
+  allTrucks[('trucks' + numTrucks)] = thisTruck.cellsTakenUp;
   // for (truck in allTrucks) {
   //   console.log(allTrucks[truck]);
   // }
