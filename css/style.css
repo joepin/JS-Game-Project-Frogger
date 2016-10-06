@@ -13,8 +13,10 @@ body {
 .main-container {
   height: 99vh;
   width: 99vh;
+  position: relative;
+  top: 0.25vh;
   /*background: red;*/
-  border: 2px solid black;
+  border: 0.25vh solid black;
   margin: 0 auto;
 }
 

@@ -3,6 +3,7 @@ console.log('game-script.js linked!');
 var gridSize = 17;
 var $curPos = null;
 var $mainContainer = null;
+var $body = null;
 var genID = null;
 var numTrucks = 0;
 var gotOutCount = 0;
@@ -12,8 +13,9 @@ $(function() {
   console.log('jQuery works!');
   getAllParameters();
   $(window).on('keydown', checkKey);
-  genID = setInterval(generateTruck, 500);
+  genID = setInterval(generateTruck, 0);
   $mainContainer = $('.main-container').eq(0);
+  $body = $('body');
   // generateTruck();
 });
 
@@ -48,6 +50,10 @@ function getCellElems(sprite) {
     sprite.cellsTakenUp.push($allCells[i]);
     // console.log(('allCells ' + i + ': '), $allCells[i]);
   }
+  sprite.type.$firstCell = $allCells[sprite.type.leftColNum];
+  sprite.type.$lastCell = $allCells[sprite.type.rightColNum - 1];
+  sprite.type.$nextCellLeft = $allCells[sprite.type.leftColNum - 1];
+  sprite.type.$nextCellRight = $allCells[sprite.type.rightColNum];
   // console.log(sprite.cellsTakenUp);
   // return ($(('.cell-' + this.cellNum + ':lt(' + (this.rightColNum) + '):gt(' + (this.leftColNum - 1) + ')'))).get();
 }
@@ -119,7 +125,8 @@ function generateTruck() {
     var nextCellClass = 'cell-' + nextCell;
     var $nextEl = $(nextColClass).children().eq(nextCell-1);
     if ($nextEl.data('isallowed') == 'no') {
-      $mainContainer.css('border-color', 'red');
+      $mainContainer.css('border-color', 'white');
+      $body.css('background', 'darkred');
       $(window).off('keydown', checkKey);
       console.log('Can\'t go there! lives--');
       return;
