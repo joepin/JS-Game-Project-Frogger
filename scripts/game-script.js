@@ -1,6 +1,6 @@
 console.log('game-script.js linked!');
 
-var gridSize = 16;
+var gridSize = 17;
 var $curPos = null;
 var $mainContainer = null;
 var genID = null;
@@ -10,31 +10,53 @@ var allTrucks = {};
 $(function() {
   console.log('jQuery works!');
   $(window).on('keydown', checkKey);
-  genID = setInterval(generateTruck, 1000);
+  genID = setInterval(generateTruck, 500);
   $mainContainer = $('.main-container').eq(0);
   // generateTruck();
 });
 
 function generateTruck() {
   numTrucks++;
-
-  if(numTrucks > 3) {
+  if(numTrucks > 20) {
     return;
   }
-
   var lengthOfTruck = 3;
-  var rightColNum = Math.floor((Math.random() * 6) + 4);
+  var rightColNum = Math.floor((Math.random() * 17) + 0);
   var leftColNum = rightColNum - lengthOfTruck;
-  console.log(leftColNum, rightColNum);
-  var cellNum = Math.floor((Math.random() * 5) + 5);
-  console.log(cellNum);
-  var cellsForNewTruck = $(('.cell-' + cellNum + ':lt(' + (rightColNum) + '):gt(' + (leftColNum - 1) + ')'));
-  cellsForNewTruck.css('background', 'red');
-  cellsForNewTruck.data('isAllowed', 'false');
-  allTrucks[('trucks' + numTrucks)] = cellsForNewTruck;
-  for (truck in allTrucks) {
-    console.log(allTrucks[truck]);
+  var cellNum = Math.floor((Math.random() * 6) + 10);
+  var allGood = false;
+  var cellsForNewTruck;
+  var broke = false;
+  var count = 0;
+  while (!allGood) {
+    cellsForNewTruck = $(('.cell-' + cellNum + ':lt(' + (rightColNum) + '):gt(' + (leftColNum - 1) + ')'));
+    for (var i = 0; i < cellsForNewTruck.length; i++) {
+      if (cellsForNewTruck[i].dataset.isallowed == 'yes') {
+        allGood = true;
+        console.log('count: ' + count + ' true ' + i);
+      } else {
+        console.log('count: ' + count + ' false ' + i);
+        break;
+        // allGood = false;
+      }
+    }
+    broke?console.log('still in while; broke'):broke;
+    cellsForNewTruck = $(('.cell-' + cellNum + ':lt(' + (rightColNum) + '):gt(' + (leftColNum - 1) + ')'));
+    rightColNum = Math.floor((Math.random() * 17) + 0);
+    leftColNum = rightColNum - lengthOfTruck;
+    cellNum = Math.floor((Math.random() * 6) + 10);
+    count++;
+    console.log(count)
   }
+
+  for (var i = 0; i < cellsForNewTruck.length; i++) {
+    cellsForNewTruck[i].dataset.isallowed = 'no';
+  }
+  cellsForNewTruck.css('background', 'red');
+  allTrucks[('trucks' + numTrucks)] = cellsForNewTruck;
+  // for (truck in allTrucks) {
+  //   console.log(allTrucks[truck]);
+  // }
 }
 
   function checkKey(e) {
@@ -61,7 +83,7 @@ function generateTruck() {
     var nextColClass = '.column-' + nextCol;
     var nextCellClass = 'cell-' + nextCell;
     var $nextEl = $(nextColClass).children().eq(nextCell-1);
-    if ($nextEl.data('isAllowed') == 'false') {
+    if ($nextEl.data('isallowed') == 'no') {
       $mainContainer.css('border-color', 'red');
       $(window).off('keydown', checkKey);
       console.log('Can\'t go there! lives--');

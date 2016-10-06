@@ -37,6 +37,18 @@ body {
   background: green;
 }*/
 
+.start {
+  background: green;
+}
+
+.midway {
+  background: #aaa;
+}
+
+.finish {
+  background: green;
+}
+
 #frogger {
   background: blue;
 }
