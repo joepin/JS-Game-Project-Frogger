@@ -10,11 +10,24 @@ var allTrucks = {};
 
 $(function() {
   console.log('jQuery works!');
+  getAllParameters();
   $(window).on('keydown', checkKey);
   genID = setInterval(generateTruck, 500);
   $mainContainer = $('.main-container').eq(0);
   // generateTruck();
 });
+
+function getAllParameters() {
+  // get and parse the url
+  var fullURL = window.location.href;
+  var queryString = fullURL.split('?')[1];
+  // split query string into an array of key-value pair strings
+  var paramsAndVals = queryString.split('&');
+  for (var i = 0; i < (paramsAndVals.length); i++) {
+    var thisPair = paramsAndVals[i].split('=');
+    console.log(thisPair[0] + ': ' + thisPair[1]);
+  }
+}
 
 function generateSprite(spriteType, spriteLength) {
   var sprite = new Sprite(spriteType);
@@ -167,3 +180,4 @@ function generateTruck() {
     var nextCell = curCell + 1;
     moveFrogger(nextCol, nextCell);
   }
+
