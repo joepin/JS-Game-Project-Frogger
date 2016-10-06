@@ -5,6 +5,7 @@ var $curPos = null;
 var $mainContainer = null;
 var genID = null;
 var numTrucks = 0;
+var gotOutCount = 0;
 var allTrucks = {};
 
 $(function() {
@@ -18,21 +19,22 @@ $(function() {
 function generateSprite(spriteType, spriteLength) {
   var sprite = new Sprite(spriteType);
   sprite.spriteLength = spriteLength;
-  sprite.rightColNum = Math.floor((Math.random() * 17) + 0);
+  sprite.rightColNum = Math.floor((Math.random() * 14) + 3);
   sprite.leftColNum = sprite.rightColNum - sprite.spriteLength;
+  console.log(sprite.leftColNum, sprite.rightColNum);
   sprite.cellNum = Math.floor((Math.random() * 6) + 10);
   getCellElems(sprite);
   return sprite;
 }
 
 function getCellElems(sprite) {
-  console.log(sprite.leftColNum, sprite.rightColNum, sprite.cellNum);
+  // console.log(sprite.leftColNum, sprite.rightColNum, sprite.cellNum);
   var $allCells = $(('.cell-' + sprite.cellNum)).toArray();
-  console.log($allCells);
+  // console.log($allCells);
   // var $goodCells = [];
-  for (var i = 0; i < (sprite.rightColNum - sprite.leftColNum); i++){
+  for (var i = sprite.leftColNum; i < (sprite.rightColNum); i++){
     sprite.cellsTakenUp.push($allCells[i]);
-    console.log(('allCells ' + i + ': '), $allCells[i]);
+    // console.log(('allCells ' + i + ': '), $allCells[i]);
   }
   // console.log(sprite.cellsTakenUp);
   // return ($(('.cell-' + this.cellNum + ':lt(' + (this.rightColNum) + '):gt(' + (this.leftColNum - 1) + ')'))).get();
@@ -40,11 +42,12 @@ function getCellElems(sprite) {
 
 function isValidPosition(sprite) {
   var spriteCells = sprite.cellsTakenUp;
-  console.log(spriteCells, spriteCells.length);
+  // console.log(spriteCells, spriteCells.length);
   for(var i = 0; i < spriteCells.length; i++) {
-    console.log(i + ': ' + spriteCells[i]);
-    console.log(spriteCells[i].dataset.isallowed);
+    // console.log(i + ': ' + spriteCells[i]);
+    // console.log(spriteCells[i].dataset.isallowed);
     if (spriteCells[i].dataset.isallowed == 'no') {
+      console.log('not allowed');
       return false;
     }
   }
@@ -59,28 +62,24 @@ function generateTruck() {
   }
   var lengthOfTruck = 3;
   var thisTruck = generateSprite('truck', lengthOfTruck);
-  var keepGoing = true;
+  var allGood = true;
   var count = 0;
-  while (!isValidPosition(thisTruck) && keepGoing) {
+  while (!isValidPosition(thisTruck) && allGood) {
     thisTruck = generateSprite('truck', lengthOfTruck);
     count++;
     if (count >= 5) {
-      console.log('got out');
-      keepGoing = true;
+      gotOutCount++;
+      console.log('got out ' + gotOutCount + ' times');
+      allGood = false;
     }
   }
-
-  for (var i = 0; i < thisTruck.cellsTakenUp.length; i++) {
-    thisTruck.cellsTakenUp[i].dataset.isallowed = 'no';
-    thisTruck.cellsTakenUp[i].style.backgroundColor = 'red';
-    // console.log(thisTruck.cellsTakenUp[i].style.backgroundColor('red'));
-    // thisTruck.cellsTakenUp[i].style('background-color', 'red');
+  if (allGood) {
+    for (var i = 0; i < thisTruck.cellsTakenUp.length; i++) {
+      thisTruck.cellsTakenUp[i].dataset.isallowed = 'no';
+      thisTruck.cellsTakenUp[i].style.backgroundColor = 'red';
+    }
+    allTrucks[('trucks' + numTrucks)] = thisTruck;
   }
-  // thisTruck.cellsTakenUp.css('background', 'red');
-  allTrucks[('trucks' + numTrucks)] = thisTruck.cellsTakenUp;
-  // for (truck in allTrucks) {
-  //   console.log(allTrucks[truck]);
-  // }
 }
 
   function checkKey(e) {
