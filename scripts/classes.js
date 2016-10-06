@@ -44,10 +44,17 @@ class Sprite {
   }
 
   swapCells($next, $remove) {
-    $next.style.backgroundColor = 'red';
-    $next.dataset.isallowed = 'no';
-    $remove.style.backgroundColor = '';
-    $remove.dataset.isallowed = 'yes';
+    // if (!isFroggerAllowed($next)) {
+    //   doLoss();
+    // }
+    if ($next) {
+      $next.style.backgroundColor = 'red';
+      $next.dataset.isallowed = 'no';
+    }
+    if ($remove) {
+      $remove.style.backgroundColor = '';
+      $remove.dataset.isallowed = 'yes';
+    }
   }
 
   getCellElems(cellNum, left, right) {

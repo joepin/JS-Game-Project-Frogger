@@ -5,6 +5,7 @@ var $curPos = null;
 var $mainContainer = null;
 var $body = null;
 var genID = null;
+var moveTrucksID = null;
 var numTrucks = 0;
 var gotOutCount = 0;
 var allTrucks = {};
@@ -17,6 +18,14 @@ $(function() {
   $mainContainer = $('.main-container').eq(0);
   $body = $('body');
   // generateTruck();
+  moveTrucksID = setInterval(moveTrucks, 1000);
+  setInterval(function(){
+    var $frogger = $('#frogger');
+    if ($frogger.attr('data-isallowed') == 'no') {
+      console.log('true');
+      doLoss();
+    }
+  }, 10);
 });
 
 function getAllParameters() {
@@ -31,6 +40,12 @@ function getAllParameters() {
   }
 }
 
+function moveTrucks() {
+  for (var truck in allTrucks) {
+    allTrucks[truck].move();
+  }
+}
+
 function generateSprite(spriteType) {
   var sprite = new Sprite(spriteType);
   sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum);
@@ -40,10 +55,7 @@ function generateSprite(spriteType) {
 
 function isValidPosition(sprite) {
   var spriteCells = sprite.cellsTakenUp;
-  // console.log(spriteCells, spriteCells.length);
   for(var i = 0; i < spriteCells.length; i++) {
-    // console.log(i + ': ' + spriteCells[i]);
-    // console.log(spriteCells[i].dataset.isallowed);
     if (spriteCells[i].dataset.isallowed == 'no') {
       console.log('not allowed');
       return false;
@@ -58,7 +70,6 @@ function generateTruck() {
     clearInterval(genID);
     return;
   }
-  // var lengthOfTruck = 3;
   var thisTruck = generateSprite(Truck);
   var allGood = true;
   var count = 0;
@@ -100,15 +111,20 @@ function generateTruck() {
     }
   }
 
+  function doLoss() {
+    $mainContainer.css('border-color', 'white');
+    $body.css('background', 'darkred');
+    $(window).off('keydown', checkKey);
+    console.log('Can\'t go there! lives--');
+    clearInterval(moveTrucksID);
+  }
+
   function moveFrogger(nextCol, nextCell) {
     var nextColClass = '.column-' + nextCol;
     var nextCellClass = 'cell-' + nextCell;
     var $nextEl = $(nextColClass).children().eq(nextCell-1);
     if ($nextEl.data('isallowed') == 'no') {
-      $mainContainer.css('border-color', 'white');
-      $body.css('background', 'darkred');
-      $(window).off('keydown', checkKey);
-      console.log('Can\'t go there! lives--');
+      doLoss();
       return;
     }
     $curPos.removeAttr('id');
