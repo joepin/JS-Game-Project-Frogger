@@ -29,24 +29,24 @@ body {
   min-width: calc(100% / 17);
 }
 
-/*.column:nth-child(even) .cell:nth-child(odd) {
-  background: yellow;
-}
-
-.column:nth-child(odd) .cell:nth-child(even) {
-  background: green;
-}*/
-
 .start {
   background: green;
 }
 
 .midway {
-  background: #aaa;
+  background: green;
 }
 
 .finish {
   background: green;
+}
+
+.river {
+  background: lightblue;
+}
+
+.street {
+  background: grey;
 }
 
 #frogger {
