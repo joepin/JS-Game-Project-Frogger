@@ -7,19 +7,18 @@ class Sprite {
   }
 
   move() {
-    var direction = null;
+    var direction = this.type.direction;
     // console.log(this);
     var numCells = this.cellsTakenUp.length;
     var $nextCell = null;
     var $removeCell = null;
     var $leadingCell = null;
-    if (this.type.cellNum % 2 == 0) {
-      direction = 'neg';
+    if (direction == 'neg') {
       $nextCell = this.type.$nextCellLeft;
       $removeCell = this.type.$lastCell;
       $leadingCell = this.type.$firstCell;
-    } else {
-      direction = 'pos';
+    }
+    if (direction == 'pos') {
       $nextCell = this.type.$nextCellRight;
       $removeCell = this.type.$firstCell
       $leadingCell = this.type.$lastCell;
@@ -29,7 +28,7 @@ class Sprite {
     }
     this.swapCells($nextCell, $removeCell, $leadingCell, this);
     this.updateObject(direction);
-    this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum);
+    this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum, direction);
     this.type.firstMove = false;
   }
 
@@ -43,14 +42,14 @@ class Sprite {
     this.type.leftColNum = this.type.rightColNum - this.type.spriteLength;
   }
 
-  getNextCell(sprite, dir) {
-    if (dir == 'neg') {
-      return sprite.type.$nextCellLeft;
-    }
-    if (dir == 'pos') {
-      return sprite.type.$nextCellRight;
-    }
-  }
+  // getNextCell(sprite, dir) {
+  //   if (dir == 'neg') {
+  //     return sprite.type.$nextCellLeft;
+  //   }
+  //   if (dir == 'pos') {
+  //     return sprite.type.$nextCellRight;
+  //   }
+  // }
 
   swapCells($next, $remove, $leading, sprite) {
     // if ($next) {
@@ -78,7 +77,7 @@ class Sprite {
     //   }
     if (!$next && !$leading && !$remove) {
       //DNE
-    } else if ((!$next && !$leading && $remove) || (!$next && $leading && !$remove)) {
+    } else if ((!$next && !$leading && $remove) || (!$next && $leading && $remove)) {
       // get rid of remove
       var nextClass = $remove.getAttribute('class');
       var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
@@ -105,17 +104,33 @@ class Sprite {
 
   }
 
-  getCellElems(cellNum, left, right) {
+  getCellElems(cellNum, left, right, dir) {
     var $allCells = $(('.cell-' + cellNum)).toArray();
     var toReturn = [];
-    for (var i = left; i < right; i++){
+    // var dir = this.type.direction;
+    for (var i = (left - 1); i < right; i++){
       toReturn.push($allCells[i]);
       // console.log(i);
     }
-    this.type.$firstCell = $allCells[left];
-    this.type.$lastCell = $allCells[right - 1];
-    this.type.$nextCellLeft = $allCells[left - 1];
-    this.type.$nextCellRight = $allCells[right];
+    if (dir == 'neg') {
+      // if (left <= 1) {
+      //   this.type.$nextCellLeft = null;
+      // }
+      this.type.$firstCell = $allCells[left];
+      this.type.$lastCell = $allCells[right - 1];
+      this.type.$nextCellLeft = $allCells[left - 1];
+      this.type.$nextCellRight = $allCells[right];
+    }
+    if (dir == 'pos') {
+      this.type.$firstCell = $allCells[right - 1];
+      this.type.$lastCell = $allCells[left];
+      this.type.$nextCellLeft = $allCells[left - 1];
+      this.type.$nextCellRight = $allCells[right];
+    }
+    // this.type.$firstCell = $allCells[left];
+    // this.type.$lastCell = $allCells[right - 1];
+    // this.type.$nextCellLeft = $allCells[left - 1];
+    // this.type.$nextCellRight = $allCells[right];
     // console.log(toReturn);
     return toReturn;
   }
@@ -132,7 +147,12 @@ class Truck {
     this.spriteLength = 3;
     this.cellNum = getRandom(7, 10);
     if (randOrOrdered == 'rand') {
-      this.rightColNum = getRandom(14, 3);
+      this.rightColNum = getRandom(14, 4);
+      if (this.cellNum % 2 == 0) {
+        this.direction = 'neg';
+      } else {
+        this.direction = 'pos';
+      }
     }
     if (randOrOrdered == 'ordered') {
       this.firstMove = true;
@@ -165,7 +185,12 @@ class Log {
     this.spriteLength = 4;
     this.cellNum = getRandom(7, 2);
     if (randOrOrdered == 'rand') {
-      this.rightColNum = getRandom(14, 3);
+      this.rightColNum = getRandom(14, 4);
+      if (this.cellNum % 2 == 0) {
+        this.direction = 'neg';
+      } else {
+        this.direction = 'pos';
+      }
     }
     if (randOrOrdered == 'ordered') {
       this.firstMove = true;

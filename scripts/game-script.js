@@ -8,6 +8,7 @@ $(function() {
     var newTruck = generateTruck('rand');
     numTrucks++;
     totTrucks++;
+    console.log(newTruck);
   }
   for (var i = 0; i < maxLogs; i++) {
     var newLog = generateLog('rand');
@@ -46,8 +47,9 @@ function getAllParameters() {
 }
 
 function moveTrucks() {
+  console.log(allTrucks);
   for (var truck in allTrucks) {
-    allTrucks[truck].move();
+    allTrucks[truck].move()
   }
 }
 
@@ -96,8 +98,8 @@ function checkLogs() {
 function generateSprite(spriteType, randOrOrdered) {
   var typeObj = new spriteType(randOrOrdered);
   var sprite = new Sprite(typeObj);
-  sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum);
-  // console.log(sprite.cellsTakenUp);
+  sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum, sprite.type.direction);
+  console.log(sprite.cellsTakenUp);
   return sprite;
 }
 
