@@ -24,7 +24,7 @@ class Sprite {
     if (!$nextCell && !$removeCell && !this.type.firstMove) {
       this.offBoard = true;
     }
-    this.swapCells($nextCell, $removeCell);
+    this.swapCells($nextCell, $removeCell, this);
     this.updateObject(direction);
     this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum);
     this.type.firstMove = false;
@@ -49,14 +49,17 @@ class Sprite {
     }
   }
 
-  swapCells($next, $remove) {
+  swapCells($next, $remove, sprite) {
     if ($next) {
-      $next.style.backgroundColor = 'red';
-      $next.dataset.isallowed = 'no';
+      var curClass = $next.getAttribute('class');
+      $next.setAttribute('class', (curClass + ' ' + sprite.type.typeClass));
+      $next.dataset.isallowed = sprite.type.canHoldFrogger;
     }
     if ($remove) {
-      $remove.style.backgroundColor = '';
-      $remove.dataset.isallowed = 'yes';
+      var curClass = $remove.getAttribute('class');
+      var newClass = curClass.replace(sprite.type.typeClass, '');
+      $remove.setAttribute('class', newClass);
+      $remove.dataset.isallowed = sprite.type.canBePlacedOn;
     }
   }
 
@@ -89,9 +92,45 @@ class Sprite {
 class Truck {
   constructor(randOrOrdered) {
     this.creationType = randOrOrdered;
+    this.canBePlacedOn = 'yes';
+    this.canHoldFrogger = 'no';
+    this.typeClass = 'truck';
     this.firstMove = false;
     this.spriteLength = 3;
     this.cellNum = getRandom(7, 10);
+    if (randOrOrdered == 'rand') {
+      this.rightColNum = getRandom(14, 3);
+    }
+    if (randOrOrdered == 'ordered') {
+      this.firstMove = true;
+      if (this.cellNum % 2 == 0) {
+        this.direction = 'neg';
+        this.rightColNum = gridSize + 1 + this.spriteLength;
+        this.$nextCellLeft = $('.cell-' + (gridSize)).eq(this.cellNum);
+      } else {
+        this.direction = 'pos';
+        this.rightColNum = 0;
+        this.$nextCellRight = $('.cell-1').eq(this.cellNum);
+      }
+    }
+    this.leftColNum = this.rightColNum - this.spriteLength;
+    console.log(this.cellNum, this.leftColNum, this.rightColNum);
+    this.$firstCell = null;
+    this.$lastCell = null;
+    this.$nextCellLeft = null;
+    this.$nextCellRight = null;
+  }
+}
+
+class Log {
+  constructor(randOrOrdered) {
+    this.creationType = randOrOrdered;
+    this.canBePlacedOn = 'no';
+    this.canHoldFrogger = 'yes';
+    this.typeClass = 'log';
+    this.firstMove = false;
+    this.spriteLength = 5;
+    this.cellNum = getRandom(7, 2);
     if (randOrOrdered == 'rand') {
       this.rightColNum = getRandom(14, 3);
     }

@@ -8,6 +8,11 @@ var checkTrucksID = null;
 var numTrucks = 0;
 var allTrucks = {};
 var maxTrucks = 10;
+var allLogs = {};
+var maxLogs = 15;
+var numLogs = 0;
+
+var moveLogsID = null;
 
 function getRandom(range, offset) {
   return (Math.floor((Math.random() * range) + offset));

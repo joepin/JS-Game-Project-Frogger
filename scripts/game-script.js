@@ -11,11 +11,17 @@ $(function() {
     numTrucks++;
     totRan++;
   }
+  for (var i = 0; i < maxLogs; i++) {
+    var newLog = generateLog('rand');
+    numLogs++;
+    // totRan++;
+  }
   $mainContainer = $('.main-container').eq(0);
   $body = $('body');
   // generateTruck();
-  moveTrucksID = setInterval(moveTrucks, 1000);
-  checkTrucksID = setInterval(checkTrucks, 1000);
+  moveTrucksID = setInterval(moveTrucks, 500);
+  checkTrucksID = setInterval(checkTrucks, 500);
+  moveLogsID = setInterval(moveLogs, 1000);
   setInterval(function(){
     var $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
@@ -43,6 +49,12 @@ function getAllParameters() {
 function moveTrucks() {
   for (var truck in allTrucks) {
     allTrucks[truck].move();
+  }
+}
+
+function moveLogs() {
+  for (var log in allLogs) {
+    allLogs[log].move();
   }
 }
 
@@ -76,7 +88,7 @@ function generateSprite(spriteType, randOrOrdered) {
 function isValidPosition(sprite) {
   var spriteCells = sprite.cellsTakenUp;
   for(var i = 0; i < spriteCells.length; i++) {
-    if (spriteCells[i] && spriteCells[i].dataset.isallowed == 'no') {
+    if (spriteCells[i] && spriteCells[i].dataset.isallowed != sprite.type.canBePlacedOn) {
       console.log('not allowed');
       return false;
     }
@@ -102,12 +114,41 @@ function generateTruck(randOrOrdered) {
     // console.log(thisTruck);
     for (var i = 0; i < thisTruck.cellsTakenUp.length; i++) {
       if (thisTruck.cellsTakenUp[i]){
-        thisTruck.cellsTakenUp[i].dataset.isallowed = 'no';
-        thisTruck.cellsTakenUp[i].style.backgroundColor = 'red';
+        thisTruck.cellsTakenUp[i].dataset.isallowed = thisTruck.type.canHoldFrogger;
+        var curClass = thisTruck.cellsTakenUp[i].getAttribute('class');
+        thisTruck.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisTruck.type.typeClass));
       }
     }
     allTrucks[('trucks' + numTrucks)] = thisTruck;
     return thisTruck;
+  }
+}
+
+var gotOutLogCount = 0;
+function generateLog(randOrOrdered) {
+  var thisLog = generateSprite(Log, randOrOrdered);
+  var allGood = true;
+  var count = 0;
+  while (!isValidPosition(thisLog) && allGood) {
+    thisLog = generateSprite(Log, randOrOrdered);
+    count++;
+    if (count >= 5) {
+      gotOutLogCount++;
+      console.log('got out ' + gotOutLogCount + ' times');
+      allGood = false;
+    }
+  }
+  if (allGood) {
+    // console.log(thisTruck);
+    for (var i = 0; i < thisLog.cellsTakenUp.length; i++) {
+      if (thisLog.cellsTakenUp[i]){
+        thisLog.cellsTakenUp[i].dataset.isallowed = thisLog.type.canHoldFrogger;
+        var curClass = thisLog.cellsTakenUp[i].getAttribute('class');
+        thisLog.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisLog.type.typeClass));
+      }
+    }
+    allLogs[('logs' + numLogs)] = thisLog;
+    return thisLog;
   }
 }
 
