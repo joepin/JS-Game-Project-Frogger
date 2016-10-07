@@ -102,11 +102,18 @@ function generateSprite(spriteType, randOrOrdered) {
 }
 
 
-function isValidPosition(sprite) {
-  var spriteCells = sprite.cellsTakenUp;
-  for(var i = 0; i < spriteCells.length; i++) {
-    if (spriteCells[i] && spriteCells[i].dataset.isallowed != sprite.type.canBePlacedOn) {
-      console.log('not allowed');
+function isValidPosition(sprite, allSprites) {
+  // var spriteCells = sprite.cellsTakenUp;
+  // for(var i = 0; i < spriteCells.length; i++) {
+  //   if (spriteCells[i] && spriteCells[i].dataset.isallowed != sprite.type.canBePlacedOn) {
+  //     console.log('not allowed');
+  //     return false;
+  //   }
+  // }
+  // return true;
+
+  for (var key in allSprites) {
+    if (sprite.type.rightColNum == allSprites[key].rightColNum && sprite.type.cellNum == allSprites[key].cellNum) {
       return false;
     }
   }
@@ -118,7 +125,7 @@ function generateTruck(randOrOrdered) {
   var thisTruck = generateSprite(Truck, randOrOrdered);
   var allGood = true;
   var count = 0;
-  while (!isValidPosition(thisTruck) && allGood) {
+  while (!isValidPosition(thisTruck, allTrucks) && allGood) {
     thisTruck = generateSprite(Truck, randOrOrdered);
     count++;
     if (count >= 5) {
@@ -146,7 +153,7 @@ function generateLog(randOrOrdered) {
   var thisLog = generateSprite(Log, randOrOrdered);
   var allGood = true;
   var count = 0;
-  while (!isValidPosition(thisLog) && allGood) {
+  while (!isValidPosition(thisLog, allLogs) && allGood) {
     thisLog = generateSprite(Log, randOrOrdered);
     count++;
     if (count >= 5) {

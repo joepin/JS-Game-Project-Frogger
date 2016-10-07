@@ -52,29 +52,26 @@ class Sprite {
   swapCells($next, $remove, sprite) {
     if ($next) {
       var curClass = $next.getAttribute('class');
-      $next.setAttribute('class', (curClass + ' ' + sprite.type.typeClass));
-      $next.dataset.isallowed = sprite.type.canHoldFrogger;
+      if (!curClass.includes(sprite.type.typeClass)){
+        $next.setAttribute('class', (curClass + ' ' + sprite.type.typeClass));
+        $next.dataset.isallowed = sprite.type.canHoldFrogger;
+      }
     }
     if ($remove) {
       var curClass = $remove.getAttribute('class');
-      var newClass = curClass.replace((' ' + sprite.type.typeClass), '');
-      $remove.setAttribute('class', newClass);
-      $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+      if (curClass.includes(sprite.type.typeClass)){
+        var newClass = curClass.replace((' ' + sprite.type.typeClass), '');
+        $remove.setAttribute('class', newClass);
+        $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+      } else {
+        // $remove.dataset.isallowed = sprite.type.canHoldFrogger;
+      }
     }
   }
 
   getCellElems(cellNum, left, right) {
     var $allCells = $(('.cell-' + cellNum)).toArray();
     var toReturn = [];
-    // if (left < 1 || right > gridSize) {
-    //   // if (cellNum % 2 == 0) {
-    //   //   // this.type.$nextCellLeft = $allCells[window.gridSize - 1];
-    //   // } else {
-    //   //   // this.type.$nextCellRight = $allCells[0];
-    //   // }
-    //   console.log('this thing is true');
-    //   return toReturn;
-    // }
     for (var i = left; i < right; i++){
       toReturn.push($allCells[i]);
       // console.log(i);
