@@ -13,6 +13,9 @@ var maxLogs = 15;
 var numLogs = 0;
 
 var moveLogsID = null;
+var checkLogsID = null;
+var totTrucks = 0;
+var totLogs = 0;
 
 function getRandom(range, offset) {
   return (Math.floor((Math.random() * range) + offset));

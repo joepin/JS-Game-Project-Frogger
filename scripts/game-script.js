@@ -1,7 +1,5 @@
 console.log('game-script.js linked!');
 
-var totRan = 0;
-
 $(function() {
   console.log('jQuery works!');
   getAllParameters();
@@ -9,12 +7,12 @@ $(function() {
   for (var i = 0; i < maxTrucks; i++) {
     var newTruck = generateTruck('rand');
     numTrucks++;
-    totRan++;
+    totTrucks++;
   }
   for (var i = 0; i < maxLogs; i++) {
     var newLog = generateLog('rand');
     numLogs++;
-    // totRan++;
+    totLogs++;
   }
   $mainContainer = $('.main-container').eq(0);
   $body = $('body');
@@ -22,6 +20,7 @@ $(function() {
   moveTrucksID = setInterval(moveTrucks, 500);
   checkTrucksID = setInterval(checkTrucks, 500);
   moveLogsID = setInterval(moveLogs, 1000);
+  checkLogsID = setInterval(checkLogs, 1000);
   setInterval(function(){
     var $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
@@ -59,7 +58,7 @@ function moveLogs() {
 }
 
 function checkTrucks() {
-      console.log('object size: ' + Object.keys(allTrucks).length);
+      // console.log('object size: ' + Object.keys(allTrucks).length);
 
   for (var truck in allTrucks) {
     if (allTrucks[truck].offBoard) {
@@ -68,10 +67,28 @@ function checkTrucks() {
       numTrucks--;
     }
     if (Object.keys(allTrucks).length < (1.5 * maxTrucks)) {
-      console.log('true totRan: ' + totRan);
-      allTrucks[('trucks' + totRan)] = generateTruck('ordered');
+      // console.log('true totTrucks: ' + totTrucks);
+      allTrucks[('trucks' + totTrucks)] = generateTruck('ordered');
       numTrucks++;
-      totRan++;
+      totTrucks++;
+    }
+  }
+}
+
+function checkLogs() {
+      console.log('object size: ' + Object.keys(allLogs).length);
+
+  for (var log in allLogs) {
+    if (allLogs[log].offBoard) {
+      // console.log('OFFBOARD: ' + allLogs[log]);
+      delete allLogs[log];
+      numLogs--;
+    }
+    if (Object.keys(allLogs).length < (1.5 * maxLogs)) {
+      console.log('true totLogs: ' + totLogs);
+      allLogs[('Logs' + totLogs)] = generateLog('ordered');
+      numLogs++;
+      totLogs++;
     }
   }
 }
@@ -167,6 +184,14 @@ function generateLog(randOrOrdered) {
       case 'ArrowDown':
         moveFroggerDown();
         break;
+      case '1':
+        clearInterval(moveTrucksID);
+        clearInterval(checkTrucksID);
+        break;
+      case '2':
+        clearInterval(moveLogsID);
+        clearInterval(checkLogsID);
+        break;
       default:
         // console.log(e.key);
     }
@@ -178,6 +203,7 @@ function generateLog(randOrOrdered) {
     $(window).off('keydown', checkKey);
     console.log('Can\'t go there! lives--');
     clearInterval(moveTrucksID);
+    clearInterval(moveLogsID);
     $('#frogger').attr('id', '');
   }
 

@@ -57,7 +57,7 @@ class Sprite {
     }
     if ($remove) {
       var curClass = $remove.getAttribute('class');
-      var newClass = curClass.replace(sprite.type.typeClass, '');
+      var newClass = curClass.replace((' ' + sprite.type.typeClass), '');
       $remove.setAttribute('class', newClass);
       $remove.dataset.isallowed = sprite.type.canBePlacedOn;
     }
@@ -129,7 +129,7 @@ class Log {
     this.canHoldFrogger = 'yes';
     this.typeClass = 'log';
     this.firstMove = false;
-    this.spriteLength = 5;
+    this.spriteLength = 4;
     this.cellNum = getRandom(7, 2);
     if (randOrOrdered == 'rand') {
       this.rightColNum = getRandom(14, 3);
