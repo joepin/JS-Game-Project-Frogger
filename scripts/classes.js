@@ -12,19 +12,22 @@ class Sprite {
     var numCells = this.cellsTakenUp.length;
     var $nextCell = null;
     var $removeCell = null;
+    var $leadingCell = null;
     if (this.type.cellNum % 2 == 0) {
       direction = 'neg';
       $nextCell = this.type.$nextCellLeft;
       $removeCell = this.type.$lastCell;
+      $leadingCell = this.type.$firstCell;
     } else {
       direction = 'pos';
       $nextCell = this.type.$nextCellRight;
       $removeCell = this.type.$firstCell
+      $leadingCell = this.type.$lastCell;
     }
     if (!$nextCell && !$removeCell && !this.type.firstMove) {
       this.offBoard = true;
     }
-    this.swapCells($nextCell, $removeCell, this);
+    this.swapCells($nextCell, $removeCell, $leadingCell, this);
     this.updateObject(direction);
     this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum);
     this.type.firstMove = false;
@@ -49,24 +52,57 @@ class Sprite {
     }
   }
 
-  swapCells($next, $remove, sprite) {
-    if ($next) {
-      var curClass = $next.getAttribute('class');
-      if (!curClass.includes(sprite.type.typeClass)){
-        $next.setAttribute('class', (curClass + ' ' + sprite.type.typeClass));
-        $next.dataset.isallowed = sprite.type.canHoldFrogger;
-      }
+  swapCells($next, $remove, $leading, sprite) {
+    // if ($next) {
+    //   var nextClass = $next.getAttribute('class');
+    //   if ($leading) {
+    //     var leadingClass = $leading.getAttribute('class');
+    //     if (leadingClass.includes(sprite.type.typeClass)){
+    //       $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
+    //       $next.dataset.isallowed = sprite.type.canHoldFrogger;
+    //     }
+    //   } else {
+    //     // $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
+    //     // $next.dataset.isallowed = sprite.type.canHoldFrogger;
+    //   }
+    // }
+    // if ($remove) {
+    //   var nextClass = $remove.getAttribute('class');
+    //   var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
+    //       $remove.setAttribute('class', newClass);
+    //       $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+    //     }
+    //    else {
+    //     // $remove.setAttribute('class', newClass);
+    //     // $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+    //   }
+    if (!$next && !$leading && !$remove) {
+      //DNE
+    } else if ((!$next && !$leading && $remove) || (!$next && $leading && !$remove)) {
+      // get rid of remove
+      var nextClass = $remove.getAttribute('class');
+      var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
+      $remove.setAttribute('class', newClass);
+      $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+    } else if (($next && !$leading && !$remove) || ($next && $leading && !$remove)) {
+      // move leading to next
+      var nextClass = $next.getAttribute('class');
+      $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
+      $next.dataset.isallowed = sprite.type.canHoldFrogger;
+    } else if ($next && $leading && $remove) {
+      // do full move
+      // get rid of remove
+      var nextClass = $remove.getAttribute('class');
+      var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
+      $remove.setAttribute('class', newClass);
+      $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+      // move leading to next
+      var nextClass = $next.getAttribute('class');
+      $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
+      $next.dataset.isallowed = sprite.type.canHoldFrogger;
     }
-    if ($remove) {
-      var curClass = $remove.getAttribute('class');
-      if (curClass.includes(sprite.type.typeClass)){
-        var newClass = curClass.replace((' ' + sprite.type.typeClass), '');
-        $remove.setAttribute('class', newClass);
-        $remove.dataset.isallowed = sprite.type.canBePlacedOn;
-      } else {
-        // $remove.dataset.isallowed = sprite.type.canHoldFrogger;
-      }
-    }
+
+
   }
 
   getCellElems(cellNum, left, right) {
