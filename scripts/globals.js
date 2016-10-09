@@ -1,4 +1,6 @@
 var gridSize = 17;
+var timer = 0;
+var timerID = null;
 var $curPos = null;
 var $mainContainer = null;
 var $body = null;

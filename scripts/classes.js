@@ -2,14 +2,12 @@ class Sprite {
 
   constructor(type) {
     this.type = type;
-    this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum, this.type.direction);
-    // this.cellsTakenUp = [];
+    this.cellsTakenUp = this.getCellElems(this.type.leftColNum, this.type.rightColNum, this.type.direction);
     this.offBoard = false;
   }
 
   move() {
     var direction = this.type.direction;
-    // console.log(this);
     var numCells = this.cellsTakenUp.length;
     var $nextCell = null;
     var $removeCell = null;
@@ -29,7 +27,7 @@ class Sprite {
     }
     this.swapCells($nextCell, $removeCell, $leadingCell, this);
     this.updateObject(direction);
-    this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum, direction);
+    this.cellsTakenUp = this.getCellElems(this.type.leftColNum, this.type.rightColNum, this.type.direction);
     this.type.firstMove = false;
   }
 
@@ -43,55 +41,31 @@ class Sprite {
     this.type.leftColNum = this.type.rightColNum - this.type.spriteLength;
   }
 
-  // getNextCell(sprite, dir) {
-  //   if (dir == 'neg') {
-  //     return sprite.type.$nextCellLeft;
-  //   }
-  //   if (dir == 'pos') {
-  //     return sprite.type.$nextCellRight;
-  //   }
-  // }
-
   swapCells($next, $remove, $leading, sprite) {
-    // if ($next) {
-    //   var nextClass = $next.getAttribute('class');
-    //   if ($leading) {
-    //     var leadingClass = $leading.getAttribute('class');
-    //     if (leadingClass.includes(sprite.type.typeClass)){
-    //       $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
-    //       $next.dataset.isallowed = sprite.type.canHoldFrogger;
-    //     }
-    //   } else {
-    //     // $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
-    //     // $next.dataset.isallowed = sprite.type.canHoldFrogger;
-    //   }
-    // }
-    // if ($remove) {
-    //   var nextClass = $remove.getAttribute('class');
-    //   var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
-    //       $remove.setAttribute('class', newClass);
-    //       $remove.dataset.isallowed = sprite.type.canBePlacedOn;
-    //     }
-    //    else {
-    //     // $remove.setAttribute('class', newClass);
-    //     // $remove.dataset.isallowed = sprite.type.canBePlacedOn;
-    //   }
     if (!$next && !$leading && !$remove) {
       // DNE
       this.offBoard = true;
+      sprite.offBoard = true;
+      sprite.type.offBoard = true;
       // console.log ('off board: ', this);
     } else if ((!$next && !$leading && $remove) || (!$next && $leading && $remove)) {
+      sprite.offBoard = false;
+      sprite.type.offBoard = false;
       // get rid of remove
       var nextClass = $remove.getAttribute('class');
       var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
       $remove.setAttribute('class', newClass);
       $remove.dataset.isallowed = sprite.type.canBePlacedOn;
     } else if (($next && !$leading && !$remove) || ($next && $leading && !$remove)) {
+      sprite.offBoard = false;
+      sprite.type.offBoard = false;
       // move leading to next
       var nextClass = $next.getAttribute('class');
       $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
       $next.dataset.isallowed = sprite.type.canHoldFrogger;
     } else if ($next && $leading && $remove) {
+      sprite.offBoard = false;
+      sprite.type.offBoard = false;
       // do full move
       // get rid of remove
       var nextClass = $remove.getAttribute('class');
@@ -103,11 +77,9 @@ class Sprite {
       $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
       $next.dataset.isallowed = sprite.type.canHoldFrogger;
     }
-
-
   }
 
-  getCellElems(cellNum, left, right, dir) {
+  getCellElems(left, right, dir) {
     var $allCells = $(('.cell-' + this.type.cellNum)).toArray();
     var toReturn = [];
     // var dir = this.type.direction;
@@ -116,13 +88,14 @@ class Sprite {
       // console.log(i);
     }
     if (dir == 'neg') {
-      // if (left <= 1) {
-      //   this.type.$nextCellLeft = null;
-      // }
       this.type.$firstCell = $allCells[left];
       this.type.$lastCell = $allCells[right - 1];
       this.type.$nextCellLeft = $allCells[left - 1];
       this.type.$nextCellRight = $allCells[right];
+      if (this.type.firstMove) {
+        this.type.$nextCellLeft = $allCells[left - 2];
+      }
+      // console.log(this, this.type.$nextCellLeft, $allCells[left - 1]);
     }
     if (dir == 'pos') {
       this.type.$firstCell = $allCells[right - 1];
@@ -138,6 +111,10 @@ class Sprite {
     return toReturn;
   }
 
+  isOffBoard() {
+    return this.type.offBoard;
+  }
+
 }
 
 class Truck {
@@ -151,6 +128,7 @@ class Truck {
     this.cellNum = getRandom(7, 10);
     if (randOrOrdered == 'rand') {
       this.rightColNum = getRandom(14, 4);
+      this.offBoard = false;
       if (this.cellNum % 2 == 0) {
         this.direction = 'neg';
       } else {
@@ -159,6 +137,7 @@ class Truck {
     }
     if (randOrOrdered == 'ordered') {
       this.firstMove = true;
+      this.offBoard = true;
       if (this.cellNum % 2 == 0) {
         this.direction = 'neg';
         this.rightColNum = gridSize + 1 + this.spriteLength;
@@ -175,6 +154,16 @@ class Truck {
     this.$lastCell = null;
     this.$nextCellLeft = null;
     this.$nextCellRight = null;
+  }
+
+  getNextCell() {
+    var dir = this.direction;
+    if (dir == 'neg') {
+      return this.$nextCellLeft;
+    }
+    if (dir == 'pos') {
+      return this.$nextCellRight;
+    }
   }
 }
 
@@ -208,7 +197,7 @@ class Log {
       }
     }
     this.leftColNum = this.rightColNum - this.spriteLength;
-    console.log(this.cellNum, this.leftColNum, this.rightColNum);
+    // console.log(this.cellNum, this.leftColNum, this.rightColNum);
     this.$firstCell = null;
     this.$lastCell = null;
     this.$nextCellLeft = null;

@@ -1,38 +1,43 @@
 console.log('game-script.js linked!');
-var timer = 0;
-var timerID = null;
 $(function() {
   console.log('jQuery works!');
   getAllParameters();
-  timerID = setInterval(function() {
-    console.log(++timer);
-  }, 1000);
+  // timerID = setInterval(function() {
+  //   // console.log(++timer);
+  // }, 1000);
   $(window).on('keydown', checkKey);
+  playGame();
+  $mainContainer = $('.main-container').eq(0);
+  $body = $('body').eq(0);
+});
+
+function playGame() {
   for (var i = 0; i < maxTrucks; i++) {
     var newTruck = generateTruck('rand');
     numTrucks++;
     totTrucks++;
-    // console.log(newTruck);
   }
+
   // for (var i = 0; i < maxLogs; i++) {
   //   var newLog = generateLog('rand');
   //   numLogs++;
   //   totLogs++;
   // }
-  $mainContainer = $('.main-container').eq(0);
-  $body = $('body');
+
+
   moveTrucksID = setInterval(moveTrucks, 1000);
-  // checkTrucksID = setInterval(checkTrucks, 1000);
+  checkTrucksID = setInterval(checkTrucks, 1000);
   // moveLogsID = setInterval(moveLogs, 1000);
   // checkLogsID = setInterval(checkLogs, 1000);
-  setInterval(function(){
+
+
+   setInterval(function(){
     var $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
-      // console.log('true');
       doLoss();
     }
   }, 10);
-});
+}
 
 function getAllParameters() {
   // get and parse the url
@@ -49,56 +54,28 @@ function getAllParameters() {
   }
 }
 
-var moveNum = 0;
 function moveTrucks() {
-  // console.log(++moveNum);
-  // console.log(allTrucks);
   for (var truck in allTrucks) {
-    // console.log(allTrucks[truck]);
     allTrucks[truck].move()
   }
 }
 
-function moveLogs() {
-  for (var log in allLogs) {
-    allLogs[log].move();
-  }
-}
-
 function checkTrucks() {
-
   for (var truck in allTrucks) {
-    // console.log(allTrucks[truck].offBoard);
     if (allTrucks[truck].offBoard) {
-      // console.log('OFFBOARD: ', allTrucks[truck]);
+      console.log('deleting', allTrucks[truck])
       delete allTrucks[truck];
       numTrucks--;
     }
   }
 
-  if (Object.keys(allTrucks).length < (1.5 * maxTrucks)) {
-    //   // console.log('true totTrucks: ' + totTrucks);
-      allTrucks[('trucks' + totTrucks)] = generateTruck('ordered');
-      // console.log(allTrucks[('trucks' + totTrucks)]);
+  for (var i = numTrucks; i < maxTrucks; i++) {
+    var newTruck = generateTruck('ordered');
+    if (newTruck) {
+      allTrucks[('trucks' + totTrucks)] = newTruck;
+      console.log('numTrucks', numTrucks, 'maxTrucks', maxTrucks);
       numTrucks++;
       totTrucks++;
-    }
-}
-
-function checkLogs() {
-      console.log('object size: ' + Object.keys(allLogs).length);
-
-  for (var log in allLogs) {
-    if (allLogs[log].offBoard) {
-      // console.log('OFFBOARD: ' + allLogs[log]);
-      delete allLogs[log];
-      numLogs--;
-    }
-    if (Object.keys(allLogs).length < (1.5 * maxLogs)) {
-      console.log('true totLogs: ' + totLogs);
-      allLogs[('Logs' + totLogs)] = generateLog('ordered');
-      numLogs++;
-      totLogs++;
     }
   }
 }
@@ -106,6 +83,11 @@ function checkLogs() {
 function generateSprite(spriteType, randOrOrdered) {
   var typeObj = new spriteType(randOrOrdered);
   var sprite = new Sprite(typeObj);
+  sprite.type.parent = sprite;
+  sprite.offBoard = sprite.isOffBoard();
+  // if (sprite.type.getNextCell().getAttribute('class').includes(sprite.type.typeClass)) {
+  //   return null;
+  // }
   // sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum, sprite.type.direction);
   // console.log(sprite);
   return sprite;
@@ -113,20 +95,11 @@ function generateSprite(spriteType, randOrOrdered) {
 
 
 function isValidPosition(sprite, allSprites) {
-  // var spriteCells = sprite.cellsTakenUp;
-  // for(var i = 0; i < spriteCells.length; i++) {
-  //   if (spriteCells[i] && spriteCells[i].dataset.isallowed != sprite.type.canBePlacedOn) {
-  //     console.log('not allowed');
-  //     return false;
-  //   }
-  // }
-  // return true;
   var notAllowedRange = sprite.type.spriteLength + 1;
-
   for (var key in allSprites) {
     var diff = Math.abs(sprite.type.rightColNum - allSprites[key].type.rightColNum);
     if (diff < notAllowedRange  && sprite.type.cellNum == allSprites[key].type.cellNum) {
-      console.log(sprite, allSprites[key], diff);
+      // console.log(sprite, allSprites[key], diff);
       return false;
     }
   }
@@ -157,35 +130,10 @@ function generateTruck(randOrOrdered) {
       }
     }
     allTrucks[('trucks' + numTrucks)] = thisTruck;
+    if (thisTruck.type.direction == 'neg') {
+      // console.log(thisTruck, thisTruck.type.$nextCellLeft)
+    }
     return thisTruck;
-  }
-}
-
-var gotOutLogCount = 0;
-function generateLog(randOrOrdered) {
-  var thisLog = generateSprite(Log, randOrOrdered);
-  var allGood = true;
-  var count = 0;
-  while (!isValidPosition(thisLog, allLogs) && allGood) {
-    thisLog = generateSprite(Log, randOrOrdered);
-    count++;
-    if (count >= 5) {
-      gotOutLogCount++;
-      console.log('got out ' + gotOutLogCount + ' times');
-      allGood = false;
-    }
-  }
-  if (allGood) {
-    // console.log(thisTruck);
-    for (var i = 0; i < thisLog.cellsTakenUp.length; i++) {
-      if (thisLog.cellsTakenUp[i]){
-        thisLog.cellsTakenUp[i].dataset.isallowed = thisLog.type.canHoldFrogger;
-        var curClass = thisLog.cellsTakenUp[i].getAttribute('class');
-        thisLog.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisLog.type.typeClass));
-      }
-    }
-    allLogs[('logs' + numLogs)] = thisLog;
-    return thisLog;
   }
 }
 
