@@ -1,31 +1,34 @@
 console.log('game-script.js linked!');
-
+var timer = 0;
+var timerID = null;
 $(function() {
   console.log('jQuery works!');
   getAllParameters();
+  timerID = setInterval(function() {
+    console.log(++timer);
+  }, 1000);
   $(window).on('keydown', checkKey);
   for (var i = 0; i < maxTrucks; i++) {
     var newTruck = generateTruck('rand');
     numTrucks++;
     totTrucks++;
-    console.log(newTruck);
+    // console.log(newTruck);
   }
-  for (var i = 0; i < maxLogs; i++) {
-    var newLog = generateLog('rand');
-    numLogs++;
-    totLogs++;
-  }
+  // for (var i = 0; i < maxLogs; i++) {
+  //   var newLog = generateLog('rand');
+  //   numLogs++;
+  //   totLogs++;
+  // }
   $mainContainer = $('.main-container').eq(0);
   $body = $('body');
-  // generateTruck();
-  moveTrucksID = setInterval(moveTrucks, 500);
-  checkTrucksID = setInterval(checkTrucks, 500);
-  moveLogsID = setInterval(moveLogs, 1000);
-  checkLogsID = setInterval(checkLogs, 1000);
+  moveTrucksID = setInterval(moveTrucks, 1000);
+  // checkTrucksID = setInterval(checkTrucks, 1000);
+  // moveLogsID = setInterval(moveLogs, 1000);
+  // checkLogsID = setInterval(checkLogs, 1000);
   setInterval(function(){
     var $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
-      console.log('true');
+      // console.log('true');
       doLoss();
     }
   }, 10);
@@ -46,9 +49,12 @@ function getAllParameters() {
   }
 }
 
+var moveNum = 0;
 function moveTrucks() {
-  console.log(allTrucks);
+  // console.log(++moveNum);
+  // console.log(allTrucks);
   for (var truck in allTrucks) {
+    // console.log(allTrucks[truck]);
     allTrucks[truck].move()
   }
 }
@@ -60,21 +66,23 @@ function moveLogs() {
 }
 
 function checkTrucks() {
-      // console.log('object size: ' + Object.keys(allTrucks).length);
 
   for (var truck in allTrucks) {
+    // console.log(allTrucks[truck].offBoard);
     if (allTrucks[truck].offBoard) {
-      // console.log('OFFBOARD: ' + allTrucks[truck]);
+      // console.log('OFFBOARD: ', allTrucks[truck]);
       delete allTrucks[truck];
       numTrucks--;
     }
-    if (Object.keys(allTrucks).length < (1.5 * maxTrucks)) {
-      // console.log('true totTrucks: ' + totTrucks);
+  }
+
+  if (Object.keys(allTrucks).length < (1.5 * maxTrucks)) {
+    //   // console.log('true totTrucks: ' + totTrucks);
       allTrucks[('trucks' + totTrucks)] = generateTruck('ordered');
+      // console.log(allTrucks[('trucks' + totTrucks)]);
       numTrucks++;
       totTrucks++;
     }
-  }
 }
 
 function checkLogs() {
@@ -98,8 +106,8 @@ function checkLogs() {
 function generateSprite(spriteType, randOrOrdered) {
   var typeObj = new spriteType(randOrOrdered);
   var sprite = new Sprite(typeObj);
-  sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum, sprite.type.direction);
-  console.log(sprite.cellsTakenUp);
+  // sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum, sprite.type.direction);
+  // console.log(sprite);
   return sprite;
 }
 
@@ -113,9 +121,12 @@ function isValidPosition(sprite, allSprites) {
   //   }
   // }
   // return true;
+  var notAllowedRange = sprite.type.spriteLength + 1;
 
   for (var key in allSprites) {
-    if (sprite.type.rightColNum == allSprites[key].rightColNum && sprite.type.cellNum == allSprites[key].cellNum) {
+    var diff = Math.abs(sprite.type.rightColNum - allSprites[key].type.rightColNum);
+    if (diff < notAllowedRange  && sprite.type.cellNum == allSprites[key].type.cellNum) {
+      console.log(sprite, allSprites[key], diff);
       return false;
     }
   }
@@ -196,10 +207,12 @@ function generateLog(randOrOrdered) {
       case '1':
         clearInterval(moveTrucksID);
         clearInterval(checkTrucksID);
+        clearInterval(timerID);
         break;
       case '2':
         clearInterval(moveLogsID);
         clearInterval(checkLogsID);
+        clearInterval(timerID);
         break;
       default:
         // console.log(e.key);

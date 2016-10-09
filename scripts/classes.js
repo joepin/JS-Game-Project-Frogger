@@ -2,7 +2,8 @@ class Sprite {
 
   constructor(type) {
     this.type = type;
-    this.cellsTakenUp = [];
+    this.cellsTakenUp = this.getCellElems(this.type.cellNum, this.type.leftColNum, this.type.rightColNum, this.type.direction);
+    // this.cellsTakenUp = [];
     this.offBoard = false;
   }
 
@@ -20,8 +21,8 @@ class Sprite {
     }
     if (direction == 'pos') {
       $nextCell = this.type.$nextCellRight;
-      $removeCell = this.type.$firstCell
-      $leadingCell = this.type.$lastCell;
+      $removeCell = this.type.$lastCell;
+      $leadingCell = this.type.$firstCell;
     }
     if (!$nextCell && !$removeCell && !this.type.firstMove) {
       this.offBoard = true;
@@ -76,7 +77,9 @@ class Sprite {
     //     // $remove.dataset.isallowed = sprite.type.canBePlacedOn;
     //   }
     if (!$next && !$leading && !$remove) {
-      //DNE
+      // DNE
+      this.offBoard = true;
+      // console.log ('off board: ', this);
     } else if ((!$next && !$leading && $remove) || (!$next && $leading && $remove)) {
       // get rid of remove
       var nextClass = $remove.getAttribute('class');
@@ -105,10 +108,10 @@ class Sprite {
   }
 
   getCellElems(cellNum, left, right, dir) {
-    var $allCells = $(('.cell-' + cellNum)).toArray();
+    var $allCells = $(('.cell-' + this.type.cellNum)).toArray();
     var toReturn = [];
     // var dir = this.type.direction;
-    for (var i = (left - 1); i < right; i++){
+    for (var i = (left); i < right; i++){
       toReturn.push($allCells[i]);
       // console.log(i);
     }
@@ -167,7 +170,7 @@ class Truck {
       }
     }
     this.leftColNum = this.rightColNum - this.spriteLength;
-    console.log(this.cellNum, this.leftColNum, this.rightColNum);
+    // console.log(this.cellNum, this.leftColNum, this.rightColNum);
     this.$firstCell = null;
     this.$lastCell = null;
     this.$nextCellLeft = null;
