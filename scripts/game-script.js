@@ -5,10 +5,12 @@ $(function() {
   // timerID = setInterval(function() {
   //   // console.log(++timer);
   // }, 1000);
-  $(window).on('keydown', checkKey);
+  $window = $(window);
+  $window.on('keydown', checkKey);
   playGame();
   $mainContainer = $('.main-container').eq(0);
   $body = $('body').eq(0);
+  $startSquare = $('.start').eq(0);
 });
 
 function playGame() {
@@ -27,10 +29,11 @@ function playGame() {
   checkTrucksID = setInterval(checkTrucks, 1000);
   moveLogsID = setInterval(moveLogs, 1000);
   checkLogsID = setInterval(checkLogs, 1000);
+  checkFroggerID = setInterval(checkFrogger, 10);
+}
 
-
-  checkFroggerID = setInterval(function(){
-    var $frogger = $('#frogger');
+function checkFrogger() {
+  $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
       doLoss();
     }
@@ -41,7 +44,6 @@ function playGame() {
       onLog = true;
       $currLog = $frogger;
     }
-  }, 10);
 }
 
 function getAllParameters() {
@@ -211,20 +213,47 @@ function generateLog(randOrOrdered) {
   }
 
   function doLoss() {
+    lives--;
     $mainContainer.css('border-color', 'white');
     $body.css('background', 'darkred');
     $(window).off('keydown', checkKey);
-    console.log('Can\'t go there! lives--');
-    clearInterval(moveTrucksID);
-    clearInterval(moveLogsID);
+    console.log('Can\'t go there!', lives, 'lives remaining');
+    // clearInterval(moveTrucksID);
+    // clearInterval(moveLogsID);
     clearInterval(checkFroggerID);
     $('#frogger').attr('id', '');
+    setTimeout(function() {
+      $startSquare.attr('id', 'frogger');
+      $window.on('keydown', checkKey);
+      $mainContainer.css('border-color', '');
+      $body.css('background', '');
+      checkFroggerID = setInterval(checkFrogger, 10);
+    }, 1000);
+    if (lives == 0) {
+      restartGame();
+    }
   }
 
   function doWin() {
-    console.log('Win!');
-    $('#frogger').attr('id', '');
+    // console.log($frogger);
+    winCount++;
+    console.log('Win! This is your', winCount, 'win');
+    var oldClass = $frogger.attr('class');
+    var newClass = oldClass + ' frogger';
+    $frogger.attr('class', newClass);
+    $frogger.attr('id', '');
     $('.start').eq(0).attr('id', 'frogger');
+    if (winCount == winsNeeded) {
+      advanceLevel();
+    }
+  }
+
+  function restartGame() {
+    window.location.reload();
+  }
+
+  function advanceLevel() {
+    window.location.reload();
   }
 
   function moveFrogger(nextCol, nextCell) {

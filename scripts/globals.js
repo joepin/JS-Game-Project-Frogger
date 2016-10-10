@@ -1,14 +1,20 @@
 var gridSize = 17;
 var timer = 0;
+var winsNeeded = 5;
+var winCount = 0;
+var lives = 3;
 
 // references to important HTML elements
 var $mainContainer = null;
 var $body = null;
+var $window = null;
+var $startSquare = null;
 
 // variables to help motion of frogger
 var $curPos = null;
 var onLog = false;
 var $currLog = null;
+var $frogger = null;
 
 // variables to hold current state of trucks
 var numTrucks = 0;
@@ -17,7 +23,7 @@ var allTrucks = [];
 
 // variables to hold current state of logs
 var numLogs = 0;
-var maxLogs = 20;
+var maxLogs = 30;
 var allLogs = [];
 
 // ID's from setInterval calls
