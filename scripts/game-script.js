@@ -15,20 +15,18 @@ function playGame() {
   for (var i = 0; i < maxTrucks; i++) {
     var newTruck = generateTruck('rand');
     numTrucks++;
-    totTrucks++;
   }
 
-  // for (var i = 0; i < maxLogs; i++) {
-  //   var newLog = generateLog('rand');
-  //   numLogs++;
-  //   totLogs++;
-  // }
+  for (var i = 0; i < maxLogs; i++) {
+    var newLog = generateLog('rand');
+    numLogs++;
+  }
 
 
   moveTrucksID = setInterval(moveTrucks, 1000);
   checkTrucksID = setInterval(checkTrucks, 1000);
-  // moveLogsID = setInterval(moveLogs, 1000);
-  // checkLogsID = setInterval(checkLogs, 1000);
+  moveLogsID = setInterval(moveLogs, 1000);
+  checkLogsID = setInterval(checkLogs, 1000);
 
 
    setInterval(function(){
@@ -63,34 +61,35 @@ function moveTrucks() {
 function checkTrucks() {
   for (var i = 0; i < allTrucks.length; i++) {
     if (allTrucks[i].offBoard) {
-      console.log('deleting', allTrucks[i])
+      // console.log('deleting', allTrucks[i])
       allTrucks.splice(i, 1);
       numTrucks--;
     }
   }
-  console.log(allTrucks);
-
   for (var i = numTrucks; i < maxTrucks; i++) {
     generateTruck('ordered');
     numTrucks++;
-  //   if (numTrucks < maxTrucks) {
-  //   var newTruck = generateTruck('ordered');
-  //   if (newTruck) {
-  //     allTrucks[('trucks' + totTrucks)] = newTruck;
-  //     console.log('numTrucks', numTrucks, 'maxTrucks', maxTrucks);
-  //     numTrucks++;
-  //     totTrucks++;
-  //   }
-  // }
-  // }
   }
+}
 
-  // if (numTrucks == 0) {
-  //   for (var i = 0; i < 5; i++) {
-  //     generateTruck('ordered');
-  //     numTrucks++;
-  //   }
-  // }
+function moveLogs() {
+  for (var i = 0; i < allLogs.length; i++) {
+    allLogs[i].move()
+  }
+}
+
+function checkLogs() {
+  for (var i = 0; i < allLogs.length; i++) {
+    if (allLogs[i].offBoard) {
+      // console.log('deleting', allLogs[i])
+      allLogs.splice(i, 1);
+      numLogs--;
+    }
+  }
+  for (var i = numLogs; i < maxLogs; i++) {
+    generateLog('ordered');
+    numLogs++;
+  }
 }
 
 function generateSprite(spriteType, randOrOrdered) {
@@ -98,11 +97,6 @@ function generateSprite(spriteType, randOrOrdered) {
   var sprite = new Sprite(typeObj);
   sprite.type.parent = sprite;
   sprite.offBoard = sprite.isOffBoard();
-  // if (sprite.type.getNextCell().getAttribute('class').includes(sprite.type.typeClass)) {
-  //   return null;
-  // }
-  // sprite.cellsTakenUp = sprite.getCellElems(sprite.type.cellNum, sprite.type.leftColNum, sprite.type.rightColNum, sprite.type.direction);
-  // console.log(sprite);
   return sprite;
 }
 
@@ -119,7 +113,7 @@ function isValidPosition(sprite, allSprites) {
   return true;
 }
 
-var gotOutCount = 0;
+// var gotOutCount = 0;
 function generateTruck(randOrOrdered) {
   var thisTruck = generateSprite(Truck, randOrOrdered);
   var allGood = true;
@@ -128,8 +122,8 @@ function generateTruck(randOrOrdered) {
     thisTruck = generateSprite(Truck, randOrOrdered);
     count++;
     if (count >= 5) {
-      gotOutCount++;
-      console.log('got out ' + gotOutCount + ' times');
+      // gotOutCount++;
+      // console.log('got out ' + gotOutCount + ' times');
       allGood = false;
       return null;
     }
@@ -145,10 +139,37 @@ function generateTruck(randOrOrdered) {
       }
     }
     allTrucks.push(thisTruck);
-    if (thisTruck.type.direction == 'neg') {
-      // console.log(thisTruck, thisTruck.type.$nextCellLeft)
-    }
     return thisTruck;
+  }
+}
+
+// var gotOutCount = 0;
+function generateLog(randOrOrdered) {
+  var thisLog = generateSprite(Log, randOrOrdered);
+  var allGood = true;
+  var count = 0;
+  while (!isValidPosition(thisLog, allLogs) && allGood) {
+    thisLog = generateSprite(Log, randOrOrdered);
+    count++;
+    if (count >= 5) {
+      // gotOutCount++;
+      // console.log('got out ' + gotOutCount + ' times');
+      allGood = false;
+      return null;
+    }
+  }
+  if (allGood) {
+    // console.log(thisLog);
+    for (var i = 0; i < thisLog.cellsTakenUp.length; i++) {
+      if (thisLog.cellsTakenUp[i]){
+        thisLog.cellsTakenUp[i].dataset.isallowed = thisLog.type.canHoldFrogger;
+        var curClass = thisLog.cellsTakenUp[i].getAttribute('class');
+        thisLog.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisLog.type.typeClass));
+        // thisLog.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisLog.type.typeClass + '-' + i));
+      }
+    }
+    allLogs.push(thisLog);
+    return thisLog;
   }
 }
 

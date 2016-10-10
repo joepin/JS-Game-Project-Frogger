@@ -10,7 +10,7 @@ var checkTrucksID = null;
 var numTrucks = 0;
 var allTrucks = [];
 var maxTrucks = 10;
-var allLogs = {};
+var allLogs = [];
 var maxLogs = 15;
 var numLogs = 0;
 

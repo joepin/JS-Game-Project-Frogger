@@ -2,7 +2,7 @@ class Sprite {
 
   constructor(type) {
     this.type = type;
-    this.cellsTakenUp = this.getCellElems(this.type.leftColNum, this.type.rightColNum, this.type.direction);
+    this.cellsTakenUp = this.getCellElems();
     this.offBoard = false;
   }
 
@@ -27,7 +27,7 @@ class Sprite {
     }
     this.swapCells($nextCell, $removeCell, $leadingCell, this);
     this.updateObject(direction);
-    this.cellsTakenUp = this.getCellElems(this.type.leftColNum, this.type.rightColNum, this.type.direction);
+    this.cellsTakenUp = this.getCellElems();
     this.type.firstMove = false;
   }
 
@@ -79,23 +79,20 @@ class Sprite {
     }
   }
 
-  getCellElems(left, right, dir) {
+  getCellElems() {
     var $allCells = $(('.cell-' + this.type.cellNum)).toArray();
     var toReturn = [];
-    // var dir = this.type.direction;
+    var dir = this.type.direction;
+    var left = this.type.leftColNum;
+    var right = this.type.rightColNum
     for (var i = (left); i < right; i++){
       toReturn.push($allCells[i]);
-      // console.log(i);
     }
     if (dir == 'neg') {
       this.type.$firstCell = $allCells[left];
       this.type.$lastCell = $allCells[right - 1];
       this.type.$nextCellLeft = $allCells[left - 1];
       this.type.$nextCellRight = $allCells[right];
-      // if (this.type.firstMove) {
-      //   this.type.$nextCellLeft = $allCells[left - 2];
-      // }
-      // console.log(this, this.type.$nextCellLeft, $allCells[left - 1]);
     }
     if (dir == 'pos') {
       this.type.$firstCell = $allCells[right - 1];
@@ -103,11 +100,6 @@ class Sprite {
       this.type.$nextCellLeft = $allCells[left - 1];
       this.type.$nextCellRight = $allCells[right];
     }
-    // this.type.$firstCell = $allCells[left];
-    // this.type.$lastCell = $allCells[right - 1];
-    // this.type.$nextCellLeft = $allCells[left - 1];
-    // this.type.$nextCellRight = $allCells[right];
-    // console.log(toReturn);
     return toReturn;
   }
 
@@ -178,6 +170,7 @@ class Log {
     this.cellNum = getRandom(7, 2);
     if (randOrOrdered == 'rand') {
       this.rightColNum = getRandom(14, 4);
+      this.offBoard = false;
       if (this.cellNum % 2 == 0) {
         this.direction = 'neg';
       } else {
@@ -186,6 +179,7 @@ class Log {
     }
     if (randOrOrdered == 'ordered') {
       this.firstMove = true;
+      this.offBoard = true;
       if (this.cellNum % 2 == 0) {
         this.direction = 'neg';
         this.rightColNum = gridSize + 1 + this.spriteLength;
