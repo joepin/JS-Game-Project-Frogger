@@ -7,65 +7,68 @@ class Sprite {
   }
 
   move() {
-    var direction = this.type.direction;
-    var numCells = this.cellsTakenUp.length;
     var $nextCell = this.type.$nextCell;
     var $removeCell = this.type.$trailingCell;
     var $leadingCell = this.type.$leadingCell;
     if (!$nextCell && !$removeCell && !this.type.firstMove) {
       this.offBoard = true;
     }
-    this.swapCells($nextCell, $removeCell, $leadingCell, this);
-    this.updateObject(direction);
+    this.swapCells();
+    this.updateObject();
     this.cellsTakenUp = this.getCellElems();
     this.type.firstMove = false;
   }
 
-  updateObject(dir) {
-    if (dir == 'neg') {
+  updateObject() {
+    if (this.type.direction == 'neg') {
       this.type.rightColNum--;
     }
-    if (dir == 'pos') {
+    if (this.type.direction == 'pos') {
       this.type.rightColNum++;
     }
     this.type.leftColNum = this.type.rightColNum - this.type.spriteLength;
   }
 
-  swapCells($next, $remove, $leading, sprite) {
+  swapCells() {
+
+    var $next = this.type.$nextCell;
+    var $remove = this.type.$trailingCell;
+    var $leading = this.type.$leadingCell;
+
     if (!$next && !$leading && !$remove) {
       // DNE
       this.offBoard = true;
-      sprite.offBoard = true;
-      sprite.type.offBoard = true;
+      this.offBoard = true;
+      this.type.offBoard = true;
       // console.log ('off board: ', this);
     } else if ((!$next && !$leading && $remove) || (!$next && $leading && $remove)) {
-      sprite.offBoard = false;
-      sprite.type.offBoard = false;
+      this.offBoard = false;
+      this.type.offBoard = false;
       // get rid of remove
       var nextClass = $remove.getAttribute('class');
-      var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
+      var newClass = nextClass.replace((' ' + this.type.typeClass), '');
       $remove.setAttribute('class', newClass);
-      $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+      $remove.dataset.isallowed = this.type.canBePlacedOn;
     } else if (($next && !$leading && !$remove) || ($next && $leading && !$remove)) {
-      sprite.offBoard = false;
-      sprite.type.offBoard = false;
+      this.offBoard = false;
+      this.type.offBoard = false;
       // move leading to next
       var nextClass = $next.getAttribute('class');
-      $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
-      $next.dataset.isallowed = sprite.type.canHoldFrogger;
+      $next.setAttribute('class', (nextClass + ' ' + this.type.typeClass));
+      $next.dataset.isallowed = this.type.canHoldFrogger;
     } else if ($next && $leading && $remove) {
-      sprite.offBoard = false;
-      sprite.type.offBoard = false;
+      this.offBoard = false;
+      this.type.offBoard = false;
       // do full move
       // get rid of remove
       var nextClass = $remove.getAttribute('class');
-      var newClass = nextClass.replace((' ' + sprite.type.typeClass), '');
+      var newClass = nextClass.replace((' ' + this.type.typeClass), '');
       $remove.setAttribute('class', newClass);
-      $remove.dataset.isallowed = sprite.type.canBePlacedOn;
+      $remove.dataset.isallowed = this.type.canBePlacedOn;
       // move leading to next
       var nextClass = $next.getAttribute('class');
-      $next.setAttribute('class', (nextClass + ' ' + sprite.type.typeClass));
-      $next.dataset.isallowed = sprite.type.canHoldFrogger;
+      $next.setAttribute('class', (nextClass + ' ' + this.type.typeClass));
+      $next.dataset.isallowed = this.type.canHoldFrogger;
     }
   }
 

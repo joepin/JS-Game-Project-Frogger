@@ -37,6 +37,10 @@ function playGame() {
     if ($frogger.attr('class').includes('finish')){
       doWin();
     }
+    if ($frogger.attr('class').includes('log')) {
+      onLog = true;
+      $currLog = $frogger;
+    }
   }, 10);
 }
 
