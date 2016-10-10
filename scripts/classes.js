@@ -31,6 +31,21 @@ class Sprite {
 
   swapCells() {
 
+    var $cellWithFrogger = null;
+    var $nextCellForFrogger = null;
+    for (var i = 0; i < this.cellsTakenUp.length; i++) {
+      var id = this.cellsTakenUp[i] ? this.cellsTakenUp[i].getAttribute('id'):null;
+      if (id && id.includes('frogger')) {
+        $cellWithFrogger = this.cellsTakenUp[i];
+        if (this.type.direction == 'neg') {
+          $nextCellForFrogger = this.cellsTakenUp[i - 1];
+        }
+        if (this.type.direction == 'pos') {
+          $nextCellForFrogger = this.cellsTakenUp[i + 1];
+        }
+      }
+    }
+
     var $next = this.type.$nextCell;
     var $remove = this.type.$trailingCell;
     var $leading = this.type.$leadingCell;
@@ -69,6 +84,10 @@ class Sprite {
       var nextClass = $next.getAttribute('class');
       $next.setAttribute('class', (nextClass + ' ' + this.type.typeClass));
       $next.dataset.isallowed = this.type.canHoldFrogger;
+    }
+    if ($cellWithFrogger && $nextCellForFrogger) {
+      $cellWithFrogger.setAttribute('id', '');
+      $nextCellForFrogger.setAttribute('id', 'frogger');
     }
   }
 
