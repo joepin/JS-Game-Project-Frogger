@@ -279,7 +279,7 @@ function generateLog(randOrOrdered) {
     var nextColClass = '.column-' + nextCol;
     var nextCellClass = 'cell-' + nextCell;
     var $nextEl = $(nextColClass).children().eq(nextCell-1);
-    if ($nextEl.data('isallowed') == 'no') {
+    if ($nextEl.data('isallowed') == 'no' || $nextEl.attr('class').includes('frogger')) {
       doLoss();
       return;
     }
