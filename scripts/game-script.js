@@ -2,16 +2,31 @@ console.log('game-script.js linked!');
 $(function() {
   console.log('jQuery works!');
   getAllParameters();
-  // timerID = setInterval(function() {
-  //   // console.log(++timer);
-  // }, 1000);
+  timerID = setInterval(function() {
+    timer++;
+  }, 1000);
   $window = $(window);
   $window.on('keydown', checkKey);
   playGame();
   $mainContainer = $('.main-container').eq(0);
   $body = $('body').eq(0);
   $startSquare = $('.start').eq(0);
+
+  var $nickname = $('#nickname').eq(0);
+  $nickname.text('nickname: ' + userName);
 });
+
+function showData() {
+  var $level = $('#level').eq(0);
+  var $lives = $('#lives').eq(0);
+  var $winCount = $('#win-count').eq(0);
+  var $time = $('#time').eq(0);
+
+  $level.text('level: ' + curLevel);
+  $lives.text('lives: ' + lives);
+  $winCount.text('wins: ' + winCount);
+  $time.text('time elapsed: ' + timer + ' seconds');
+}
 
 function playGame() {
   for (var i = 0; i < maxTrucks; i++) {
@@ -30,6 +45,7 @@ function playGame() {
   moveLogsID = setInterval(moveLogs, 1000);
   checkLogsID = setInterval(checkLogs, 1000);
   checkFroggerID = setInterval(checkFrogger, 10);
+  showDataID = setInterval(showData, 100);
 }
 
 function checkFrogger() {
@@ -57,7 +73,10 @@ function getAllParameters() {
   var paramsAndVals = queryString.split('&');
   for (var i = 0; i < (paramsAndVals.length); i++) {
     var thisPair = paramsAndVals[i].split('=');
-    console.log(thisPair[0] + ': ' + thisPair[1]);
+    // console.log(thisPair[0] + ': ' + thisPair[1]);
+    if (thisPair[0] == 'nickname') {
+      userName = thisPair[1];
+    }
   }
 }
 

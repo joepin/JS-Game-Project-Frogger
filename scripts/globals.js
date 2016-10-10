@@ -3,6 +3,8 @@ var timer = 0;
 var winsNeeded = 5;
 var winCount = 0;
 var lives = 3;
+var userName = null;
+var curLevel = 0;
 
 // references to important HTML elements
 var $mainContainer = null;
@@ -33,6 +35,7 @@ var checkTrucksID = null;
 var moveLogsID = null;
 var checkLogsID = null;
 var checkFroggerID = null;
+var showDataID = null;
 
 // utility functions
 
