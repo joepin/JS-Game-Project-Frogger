@@ -9,15 +9,9 @@ class Sprite {
   move() {
     var direction = this.type.direction;
     var numCells = this.cellsTakenUp.length;
-    var $nextCell = null;
-    var $removeCell = this.type.$lastCell;
-    var $leadingCell = this.type.$firstCell;
-    if (direction == 'neg') {
-      $nextCell = this.type.$nextCellLeft;
-    }
-    if (direction == 'pos') {
-      $nextCell = this.type.$nextCellRight;
-    }
+    var $nextCell = this.type.$nextCell;
+    var $removeCell = this.type.$trailingCell;
+    var $leadingCell = this.type.$leadingCell;
     if (!$nextCell && !$removeCell && !this.type.firstMove) {
       this.offBoard = true;
     }
@@ -85,16 +79,14 @@ class Sprite {
       toReturn.push($allCells[i]);
     }
     if (dir == 'neg') {
-      this.type.$firstCell = $allCells[left];
-      this.type.$lastCell = $allCells[right - 1];
-      this.type.$nextCellLeft = $allCells[left - 1];
-      this.type.$nextCellRight = $allCells[right];
+      this.type.$leadingCell = $allCells[left];
+      this.type.$trailingCell = $allCells[right - 1];
+      this.type.$nextCell = $allCells[left - 1];
     }
     if (dir == 'pos') {
-      this.type.$firstCell = $allCells[right - 1];
-      this.type.$lastCell = $allCells[left];
-      this.type.$nextCellLeft = $allCells[left - 1];
-      this.type.$nextCellRight = $allCells[right];
+      this.type.$leadingCell = $allCells[right - 1];
+      this.type.$trailingCell = $allCells[left];
+      this.type.$nextCell = $allCells[right];
     }
     return toReturn;
   }
@@ -128,11 +120,11 @@ class Truck {
       this.offBoard = true;
       if (this.direction == 'neg'){
         this.rightColNum = gridSize + 1 + this.spriteLength;
-        this.$nextCellLeft = $('.cell-' + (gridSize)).eq(this.cellNum);
+        this.$nextCell = $('.cell-' + (gridSize)).eq(this.cellNum);
       }
       if (this.direction == 'pos') {
         this.rightColNum = 0;
-        this.$nextCellRight = $('.cell-1').eq(this.cellNum);
+        this.$nextCell = $('.cell-1').eq(this.cellNum);
       }
     }
     this.leftColNum = this.rightColNum - this.spriteLength;
@@ -141,10 +133,10 @@ class Truck {
   getNextCell() {
     var dir = this.direction;
     if (dir == 'neg') {
-      return this.$nextCellLeft;
+      return this.$nextCell;
     }
     if (dir == 'pos') {
-      return this.$nextCellRight;
+      return this.$nextCell;
     }
   }
 }
@@ -173,11 +165,11 @@ class Log {
       this.offBoard = true;
       if (this.direction == 'neg') {
         this.rightColNum = gridSize + 1 + this.spriteLength;
-        this.$nextCellLeft = $('.cell-' + (gridSize)).eq(this.cellNum);
+        this.$nextCell = $('.cell-' + (gridSize)).eq(this.cellNum);
       }
       if (this.direction == 'pos') {
         this.rightColNum = 0;
-        this.$nextCellRight = $('.cell-1').eq(this.cellNum);
+        this.$nextCell = $('.cell-1').eq(this.cellNum);
       }
     }
     this.leftColNum = this.rightColNum - this.spriteLength;

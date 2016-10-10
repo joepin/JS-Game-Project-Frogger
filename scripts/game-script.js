@@ -69,7 +69,7 @@ function checkTrucks() {
       numTrucks--;
     }
   }
-  for (var i = numTrucks; i < maxTrucks; i++) {
+  for (var i = numTrucks; i < 1.5 * maxTrucks; i++) {
     generateTruck('ordered');
     numTrucks++;
   }
