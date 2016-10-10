@@ -10,17 +10,13 @@ class Sprite {
     var direction = this.type.direction;
     var numCells = this.cellsTakenUp.length;
     var $nextCell = null;
-    var $removeCell = null;
-    var $leadingCell = null;
+    var $removeCell = this.type.$lastCell;
+    var $leadingCell = this.type.$firstCell;
     if (direction == 'neg') {
       $nextCell = this.type.$nextCellLeft;
-      $removeCell = this.type.$lastCell;
-      $leadingCell = this.type.$firstCell;
     }
     if (direction == 'pos') {
       $nextCell = this.type.$nextCellRight;
-      $removeCell = this.type.$lastCell;
-      $leadingCell = this.type.$firstCell;
     }
     if (!$nextCell && !$removeCell && !this.type.firstMove) {
       this.offBoard = true;
@@ -118,34 +114,28 @@ class Truck {
     this.firstMove = false;
     this.spriteLength = 3;
     this.cellNum = getRandom(7, 10);
+    if (this.cellNum % 2 == 0) {
+      this.direction = 'neg';
+    } else {
+      this.direction = 'pos';
+    }
     if (randOrOrdered == 'rand') {
       this.rightColNum = getRandom(14, 4);
       this.offBoard = false;
-      if (this.cellNum % 2 == 0) {
-        this.direction = 'neg';
-      } else {
-        this.direction = 'pos';
-      }
     }
     if (randOrOrdered == 'ordered') {
       this.firstMove = true;
       this.offBoard = true;
-      if (this.cellNum % 2 == 0) {
-        this.direction = 'neg';
+      if (this.direction == 'neg'){
         this.rightColNum = gridSize + 1 + this.spriteLength;
         this.$nextCellLeft = $('.cell-' + (gridSize)).eq(this.cellNum);
-      } else {
-        this.direction = 'pos';
+      }
+      if (this.direction == 'pos') {
         this.rightColNum = 0;
         this.$nextCellRight = $('.cell-1').eq(this.cellNum);
       }
     }
     this.leftColNum = this.rightColNum - this.spriteLength;
-    // console.log(this.cellNum, this.leftColNum, this.rightColNum);
-    this.$firstCell = null;
-    this.$lastCell = null;
-    this.$nextCellLeft = null;
-    this.$nextCellRight = null;
   }
 
   getNextCell() {
@@ -168,33 +158,28 @@ class Log {
     this.firstMove = false;
     this.spriteLength = 4;
     this.cellNum = getRandom(7, 2);
+    if (this.cellNum % 2 == 0) {
+      this.direction = 'neg';
+    } else {
+      this.direction = 'pos';
+    }
+
     if (randOrOrdered == 'rand') {
       this.rightColNum = getRandom(14, 4);
       this.offBoard = false;
-      if (this.cellNum % 2 == 0) {
-        this.direction = 'neg';
-      } else {
-        this.direction = 'pos';
-      }
     }
     if (randOrOrdered == 'ordered') {
       this.firstMove = true;
       this.offBoard = true;
-      if (this.cellNum % 2 == 0) {
-        this.direction = 'neg';
+      if (this.direction == 'neg') {
         this.rightColNum = gridSize + 1 + this.spriteLength;
         this.$nextCellLeft = $('.cell-' + (gridSize)).eq(this.cellNum);
-      } else {
-        this.direction = 'pos';
+      }
+      if (this.direction == 'pos') {
         this.rightColNum = 0;
         this.$nextCellRight = $('.cell-1').eq(this.cellNum);
       }
     }
     this.leftColNum = this.rightColNum - this.spriteLength;
-    // console.log(this.cellNum, this.leftColNum, this.rightColNum);
-    this.$firstCell = null;
-    this.$lastCell = null;
-    this.$nextCellLeft = null;
-    this.$nextCellRight = null;
   }
 }
