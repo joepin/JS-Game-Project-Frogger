@@ -92,9 +92,9 @@ class Sprite {
       this.type.$lastCell = $allCells[right - 1];
       this.type.$nextCellLeft = $allCells[left - 1];
       this.type.$nextCellRight = $allCells[right];
-      if (this.type.firstMove) {
-        this.type.$nextCellLeft = $allCells[left - 2];
-      }
+      // if (this.type.firstMove) {
+      //   this.type.$nextCellLeft = $allCells[left - 2];
+      // }
       // console.log(this, this.type.$nextCellLeft, $allCells[left - 1]);
     }
     if (dir == 'pos') {

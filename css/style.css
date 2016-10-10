@@ -62,3 +62,20 @@ body {
 .truck {
   background: red;
 }
+
+.truck-1 {
+  background: url('../assets/images/truck.png') no-repeat left center;
+  background-size: 300% 100%;
+}
+
+.truck-2 {
+  background: url('../assets/images/truck.png') no-repeat center center;
+  background-size: 300% 100%;
+}
+
+.truck-3 {
+  background: url('../assets/images/truck.png') no-repeat right center;
+  background-size: 300% 100%;
+}
+
+

@@ -55,29 +55,42 @@ function getAllParameters() {
 }
 
 function moveTrucks() {
-  for (var truck in allTrucks) {
-    allTrucks[truck].move()
+  for (var i = 0; i < allTrucks.length; i++) {
+    allTrucks[i].move()
   }
 }
 
 function checkTrucks() {
-  for (var truck in allTrucks) {
-    if (allTrucks[truck].offBoard) {
-      console.log('deleting', allTrucks[truck])
-      delete allTrucks[truck];
+  for (var i = 0; i < allTrucks.length; i++) {
+    if (allTrucks[i].offBoard) {
+      console.log('deleting', allTrucks[i])
+      allTrucks.splice(i, 1);
       numTrucks--;
     }
   }
+  console.log(allTrucks);
 
   for (var i = numTrucks; i < maxTrucks; i++) {
-    var newTruck = generateTruck('ordered');
-    if (newTruck) {
-      allTrucks[('trucks' + totTrucks)] = newTruck;
-      console.log('numTrucks', numTrucks, 'maxTrucks', maxTrucks);
-      numTrucks++;
-      totTrucks++;
-    }
+    generateTruck('ordered');
+    numTrucks++;
+  //   if (numTrucks < maxTrucks) {
+  //   var newTruck = generateTruck('ordered');
+  //   if (newTruck) {
+  //     allTrucks[('trucks' + totTrucks)] = newTruck;
+  //     console.log('numTrucks', numTrucks, 'maxTrucks', maxTrucks);
+  //     numTrucks++;
+  //     totTrucks++;
+  //   }
+  // }
+  // }
   }
+
+  // if (numTrucks == 0) {
+  //   for (var i = 0; i < 5; i++) {
+  //     generateTruck('ordered');
+  //     numTrucks++;
+  //   }
+  // }
 }
 
 function generateSprite(spriteType, randOrOrdered) {
@@ -118,6 +131,7 @@ function generateTruck(randOrOrdered) {
       gotOutCount++;
       console.log('got out ' + gotOutCount + ' times');
       allGood = false;
+      return null;
     }
   }
   if (allGood) {
@@ -127,9 +141,10 @@ function generateTruck(randOrOrdered) {
         thisTruck.cellsTakenUp[i].dataset.isallowed = thisTruck.type.canHoldFrogger;
         var curClass = thisTruck.cellsTakenUp[i].getAttribute('class');
         thisTruck.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisTruck.type.typeClass));
+        // thisTruck.cellsTakenUp[i].setAttribute('class', (curClass + ' ' + thisTruck.type.typeClass + '-' + i));
       }
     }
-    allTrucks[('trucks' + numTrucks)] = thisTruck;
+    allTrucks.push(thisTruck);
     if (thisTruck.type.direction == 'neg') {
       // console.log(thisTruck, thisTruck.type.$nextCellLeft)
     }
