@@ -19,6 +19,8 @@ var checkLogsID = null;
 var totTrucks = 0;
 var totLogs = 0;
 
+var checkFroggerID = null;
+
 function getRandom(range, offset) {
   return (Math.floor((Math.random() * range) + offset));
 }

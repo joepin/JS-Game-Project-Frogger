@@ -29,10 +29,13 @@ function playGame() {
   checkLogsID = setInterval(checkLogs, 1000);
 
 
-   setInterval(function(){
+  checkFroggerID = setInterval(function(){
     var $frogger = $('#frogger');
     if ($frogger.attr('data-isallowed') == 'no') {
       doLoss();
+    }
+    if ($frogger.attr('class').includes('finish')){
+      doWin();
     }
   }, 10);
 }
@@ -54,7 +57,7 @@ function getAllParameters() {
 
 function moveTrucks() {
   for (var i = 0; i < allTrucks.length; i++) {
-    allTrucks[i].move()
+    allTrucks[i].move();
   }
 }
 
@@ -74,7 +77,7 @@ function checkTrucks() {
 
 function moveLogs() {
   for (var i = 0; i < allLogs.length; i++) {
-    allLogs[i].move()
+    allLogs[i].move();
   }
 }
 
@@ -86,7 +89,7 @@ function checkLogs() {
       numLogs--;
     }
   }
-  for (var i = numLogs; i < maxLogs; i++) {
+  for (var i = numLogs; i < 1.5 * maxLogs; i++) {
     generateLog('ordered');
     numLogs++;
   }
@@ -210,7 +213,14 @@ function generateLog(randOrOrdered) {
     console.log('Can\'t go there! lives--');
     clearInterval(moveTrucksID);
     clearInterval(moveLogsID);
+    clearInterval(checkFroggerID);
     $('#frogger').attr('id', '');
+  }
+
+  function doWin() {
+    console.log('Win!');
+    $('#frogger').attr('id', '');
+    $('.start').eq(0).attr('id', 'frogger');
   }
 
   function moveFrogger(nextCol, nextCell) {
