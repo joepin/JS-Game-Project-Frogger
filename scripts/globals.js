@@ -4,7 +4,7 @@ var winsNeeded = 5;
 var winCount = 0;
 var lives = 3;
 var userName = null;
-var curLevel = 0;
+var curLevel = 1;
 
 // references to important HTML elements
 var $mainContainer = null;

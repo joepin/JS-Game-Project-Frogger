@@ -76,6 +76,7 @@ class Sprite {
     // does the sprite have at least a trailing div on the board, even if it doesn't have a destination?
     } else if ((!$next && !$leading && $remove) || (!$next && $leading && $remove)) {
       // if it does, then we want to remove the trailing div, since the sprite is almost off the board
+      this.offBoard = false;
       // remove the type's class from the current div
       var nextClass = $remove.getAttribute('class');
       var newClass = nextClass.replace((' ' + this.type.typeClass), '');
@@ -85,6 +86,7 @@ class Sprite {
     // does the sprite have a destination even if it's missing a first and/or last div?
     } else if (($next && !$leading && !$remove) || ($next && $leading && !$remove)) {
       // if it does, then we want to add a new trailing div, since the sprite is just getting on the board
+      this.offBoard = false;
       // add the type's class to the new div
       var nextClass = $next.getAttribute('class');
       $next.setAttribute('class', (nextClass + ' ' + this.type.typeClass));
@@ -92,6 +94,7 @@ class Sprite {
       $next.dataset.isallowed = this.type.canHoldFrogger;
     // do all the sprites elements exist? aka is the sprite entirely on the board and not approaching the board's end?
     } else if ($next && $leading && $remove) {
+      this.offBoard = false;
       // do a full move
       // get rid of remove
       var nextClass = $remove.getAttribute('class');

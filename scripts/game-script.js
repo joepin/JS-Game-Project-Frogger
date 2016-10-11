@@ -374,12 +374,12 @@ function generateLog(randOrOrdered) {
   // helper function to get the column number of an element
   // note that this function only works if the column number class is the first class that has a dash in it
   function getCurrentColumn() {
-    return (parseInt($curPos.parent().attr('class').split('-')[1]));
+    return (parseInt($frogger.parent().attr('class').split('-')[1]));
   }
   // helper function to get the row number of an element
   // note that this function only works if the cell number class is the first class that has a dash in it
   function getCurrentCell() {
-    return (parseInt($curPos.attr('class').split('-')[1]));
+    return (parseInt($frogger.attr('class').split('-')[1]));
   }
 
   // function that determines what the next element's coordinates should be if the user moved right
