@@ -5,6 +5,8 @@ var winCount = 0;
 var lives = 3;
 var userName = null;
 var curLevel = 1;
+var multiplier = 1;
+var speed = 1000;
 
 // references to important HTML elements
 var $mainContainer = null;

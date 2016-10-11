@@ -3,10 +3,6 @@ $(function() {
   // console.log('jQuery works!');
   // get all the parameters passed over from the index page; currently only need nickname
   getAllParameters();
-  // start a 'timer' using a setInterval call
-  timerID = setInterval(function() {
-    timer++;
-  }, 1000);
   // get important elements and cache them
   $window = $(window);
   $mainContainer = $('.main-container').eq(0);
@@ -25,7 +21,6 @@ $(function() {
 
   // call the setupGame function
   setupGame();
-  $window.on('keydown', checkKey);
   // call the playGame function
   playGame();
 });
@@ -40,22 +35,27 @@ function showData() {
 
 // this function generates the initial sprites that will be on the screen at the beginning of the round
 function setupGame() {
-  for (var i = 0; i < maxTrucks; i++) {
+  $window.on('keydown', checkKey);
+  for (var i = 0; i < multiplier * maxTrucks; i++) {
     generateTruck('rand');
     numTrucks++;
   }
-  for (var i = 0; i < maxLogs; i++) {
+  for (var i = 0; i < multiplier * maxLogs; i++) {
     generateLog('rand');
     numLogs++;
   }
+  // start a 'timer' using a setInterval call
+  timerID = setInterval(function() {
+    timer++;
+  }, 1000);
 }
 
 // this function starts the gameplay by simply calling setInterval on important functions
 function playGame() {
-  moveTrucksID = setInterval(moveTrucks, 1000);
-  checkTrucksID = setInterval(checkTrucks, 1000);
-  moveLogsID = setInterval(moveLogs, 1000);
-  checkLogsID = setInterval(checkLogs, 1000);
+  moveTrucksID = setInterval(moveTrucks, speed);
+  moveLogsID = setInterval(moveLogs, speed);
+  checkTrucksID = setInterval(checkTrucks, speed);
+  checkLogsID = setInterval(checkLogs, speed);
   checkFroggerID = setInterval(checkFrogger, 10);
   showDataID = setInterval(showData, 100);
 }
@@ -112,7 +112,7 @@ function checkTrucks() {
   }
   // loop through the difference between the number of sprites that we currently have and the desired amount
   // as determined by 1.5 times the maximum
-  for (var i = numTrucks; i < 1.5 * maxTrucks; i++) {
+  for (var i = numTrucks; i < (1.5 * multiplier * maxTrucks); i++) {
     generateTruck('ordered');
     numTrucks++;
   }
@@ -137,7 +137,7 @@ function checkLogs() {
   }
   // loop through the difference between the number of sprites that we currently have and the desired amount
   // as determined by 1.5 times the maximum
-  for (var i = numLogs; i < 1.5 * maxLogs; i++) {
+  for (var i = numLogs; i < (1.5 * multiplier * maxLogs); i++) {
     generateLog('ordered');
     numLogs++;
   }
@@ -301,7 +301,7 @@ function generateLog(randOrOrdered) {
     }, 1000);
     // if the user exhausted all their lives call the restartGame function to start over from the first level
     if (lives == 0) {
-      restartGame();
+      displayLossPopup();
     }
   }
 
@@ -321,36 +321,128 @@ function generateLog(randOrOrdered) {
       // throw some confetti on the screen
       $('.overlay').eq(0).css('background', 'url(assets/images/confetti.gif)');
       // move the user to the next level
-      advanceLevel();
+      displayWinPopup();
     }
   }
 
   // needs work!!!
-  function restartGame() {
-    // window.location.reload();
+  function displayLossPopup() {
+    // remove keydown event listener
     $(window).off('keydown', checkKey);
+    // stop all running functions
     clearInterval(moveTrucksID);
     clearInterval(checkTrucksID);
     clearInterval(moveLogsID);
     clearInterval(checkLogsID);
     clearInterval(timerID);
+
+    // hide the board's grid
+    $mainContainer.children().hide();
+    // show the winning popup div and add it to the main container, fading it in for effect
+    var $popup = $('.popup-loss').eq(0);
+    // set the popup's children's text fields
+    $('#loss-popup-level').text(curLevel + '!');
+    // add click event listener to popup's button
+    $('#start-over').eq(0).on('click', restartGame);
+    $mainContainer.append($popup);
+    $popup.fadeIn(1500);
+    // change flex property to vertically align the popup
+    $mainContainer.css('align-items', 'center');
+  }
+
+  function restartGame() {
+    clearAllCells();
+    numTrucks = 0;
+    numLogs = 0;
+    allTrucks = [];
+    allLogs = [];
+    curLevel = 0;
+    winCount = 0;
+    timer = 0;
+    multiplier = 1;
+    speed = 1000;
+    setupGame();
+    playGame();
+    var $popup = $('.popup-loss').eq(0);
+    $body.append($popup);
+    $popup.hide(100);
+    $mainContainer.css('align-items', '');
+    $mainContainer.children().show();
   }
 
   // needs work!!!
-  function advanceLevel() {
-    // window.location.reload();
+  function displayWinPopup() {
+    // remove keydown event listener
     $(window).off('keydown', checkKey);
+    // stop all running functions
     clearInterval(moveTrucksID);
     clearInterval(checkTrucksID);
     clearInterval(moveLogsID);
     clearInterval(checkLogsID);
     clearInterval(timerID);
     clearInterval(checkFroggerID);
-    $mainContainer.empty();
+
+    // hide the board's grid
+    $mainContainer.children().hide();
+    // show the winning popup div and add it to the main container, fading it in for effect
     var $popup = $('.popup-win').eq(0);
+    // set the popup's children's text fields
+    $('#win-popup-level').text(curLevel + '!');
+    // add click event listener to popup's button
+    $('#next-round').eq(0).on('click', advanceLevel);
     $mainContainer.append($popup);
     $popup.fadeIn(1500);
+    // change flex property to vertically align the popup
     $mainContainer.css('align-items', 'center');
+  }
+
+  function advanceLevel() {
+    clearAllCells();
+    numTrucks = 0;
+    numLogs = 0;
+    allTrucks = [];
+    allLogs = [];
+    curLevel++;
+    winCount = 0;
+    timer = 0;
+    (multiplier > 0.1) ? multiplier -= .1:multiplier = .1;
+    (speed > 100) ? speed -= 100:speed = 100;
+    setupGame();
+    playGame();
+    var $popup = $('.popup-win').eq(0);
+    $body.append($popup);
+    $popup.hide(100);
+    $mainContainer.css('align-items', '');
+    $mainContainer.children().show();
+    // hide the confetti
+    $('.overlay').eq(0).css('background', '');
+  }
+
+  // function that first queries the DOM for all elements with a class of cell, then loops through them all and removes
+  // special classes
+  function clearAllCells() {
+    var $allCells = $('.cell');
+    for (var i = 0; i < $allCells.length; i++) {
+      var oldClass = $allCells[i].getAttribute('class');
+      if (oldClass.includes('truck')){
+        var newClass = oldClass.replace(' truck', '');
+        $allCells[i].setAttribute('class', newClass);
+      }
+      if (oldClass.includes('log')){
+        var newClass = oldClass.replace(' log', '');
+        $allCells[i].setAttribute('class', newClass);
+      }
+      if (oldClass.includes('frogger')){
+        var newClass = oldClass.replace(' frogger', '');
+        $allCells[i].setAttribute('class', newClass);
+      }
+      if (oldClass.includes('street')) {
+        $allCells[i].dataset.isallowed = 'yes';
+      }
+      if (oldClass.includes('river')) {
+        $allCells[i].dataset.isallowed = 'no';
+      }
+    }
   }
 
   // function that actually moves the frogger id to the next div
