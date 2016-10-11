@@ -6,7 +6,7 @@ body {
   padding: 0;
   margin: 0;
   /*background: url(../assets/images/frog-lake.jpg) no-repeat center center fixed;*/
-  background: black;
+  background: #000;
 }
 
 .flex-container {
@@ -174,4 +174,12 @@ body {
   font-weight: 300;
   color: white;
   font-size: 18px;
+}
+.overlay {
+  /*z-index: -10;*/
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  position: absolute;
 }

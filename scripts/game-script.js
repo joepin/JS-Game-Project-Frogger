@@ -263,16 +263,29 @@ function generateLog(randOrOrdered) {
     $frogger.attr('id', '');
     $('.start').eq(0).attr('id', 'frogger');
     if (winCount == winsNeeded) {
+      $('.overlay').eq(0).css('background', 'url(assets/images/confetti.gif)');
       advanceLevel();
     }
   }
 
   function restartGame() {
-    window.location.reload();
+    // window.location.reload();
+    $(window).off('keydown', checkKey);
+    clearInterval(moveTrucksID);
+    clearInterval(checkTrucksID);
+    clearInterval(moveLogsID);
+    clearInterval(checkLogsID);
+    clearInterval(timerID);
   }
 
   function advanceLevel() {
-    window.location.reload();
+    // window.location.reload();
+    $(window).off('keydown', checkKey);
+    clearInterval(moveTrucksID);
+    clearInterval(checkTrucksID);
+    clearInterval(moveLogsID);
+    clearInterval(checkLogsID);
+    clearInterval(timerID);
   }
 
   function moveFrogger(nextCol, nextCell) {
