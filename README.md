@@ -44,6 +44,21 @@ The CSS of the game is a little more involved, yet simplified and dignified by t
 
 ### JavaScript
 
+The heart of this game is in the JavaScript, which controls the entire experience of the game. The first encounter the user has with JS is on the landing page, where I simply move a picture of a frog around the screen at random.
+
+The remainder of the JS code is implemented on the game.html page. I thought it necessary to break up the code into three files:
+
+1) The file called ['globals.js'](scripts/globals.js) simply contains all the global variables I set and use in the game, and is kept separate from the actual code so that the variables can be used by the other two files from the first instance they're loaded.
+
+2) The file called ['classes.js'](scripts/classes.js) defines three classes:
+  - Sprite
+  - Truck
+  - Log  
+   which will be explained below.
+
+3) The file called ['game-script.js'](scripts/game-script.js) contans the runtime functions for the game, and is responsible for starting and playing the game.
+
+
 
 
 https://wireframe.cc/fBjoaA
