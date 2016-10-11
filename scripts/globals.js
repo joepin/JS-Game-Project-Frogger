@@ -19,8 +19,7 @@ var $lives = null;
 var $winCount = null;
 var $time = null;
 
-// variables to help motion of frogger
-var $curPos = null;
+// global variable to hold the current frogger element
 var $frogger = null;
 
 // variables to hold current state of trucks
