@@ -1,6 +1,6 @@
 var gridSize = 17;
 var timer = 0;
-var winsNeeded = 5;
+var winsNeeded = 1;
 var winCount = 0;
 var lives = 3;
 var userName = null;

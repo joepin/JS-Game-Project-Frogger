@@ -286,6 +286,12 @@ function generateLog(randOrOrdered) {
     clearInterval(moveLogsID);
     clearInterval(checkLogsID);
     clearInterval(timerID);
+    clearInterval(checkFroggerID);
+    $mainContainer.empty();
+    var $popup = $('.popup-win').eq(0);
+    $mainContainer.append($popup);
+    $popup.fadeIn(1500);
+    $mainContainer.css('align-items', 'center');
   }
 
   function moveFrogger(nextCol, nextCell) {
