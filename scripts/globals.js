@@ -1,6 +1,6 @@
 var gridSize = 17;
 var timer = 0;
-var winsNeeded = 1;
+var winsNeeded = 5;
 var winCount = 0;
 var lives = 3;
 var userName = null;
@@ -12,10 +12,15 @@ var $body = null;
 var $window = null;
 var $startSquare = null;
 
+// some less important HTML elements
+var $nickname = null;
+var $level = null;
+var $lives = null;
+var $winCount = null;
+var $time = null;
+
 // variables to help motion of frogger
 var $curPos = null;
-var onLog = false;
-var $currLog = null;
 var $frogger = null;
 
 // variables to hold current state of trucks
